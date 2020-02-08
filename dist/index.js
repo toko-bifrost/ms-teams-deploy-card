@@ -8513,7 +8513,7 @@ const run = async () => {
     const allowedFileLen = parseInt(core_1.getInput("allowed-file-len"));
     const octokit = new github_1.GitHub(githubToken);
     const commit = await octokit.repos.getCommit({
-        owner: repo.owner,
+        owner: process.env.GITHUB_ACTOR,
         repo: repo.repo,
         ref: sha
     });

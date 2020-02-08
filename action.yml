@@ -6,7 +6,7 @@ inputs:
   webhook-uri:
     description: Microsoft Teams webhook URI
     required: true
-  github_token:
+  github-token:
     description: Github token
     required: true
   deploy-title:
