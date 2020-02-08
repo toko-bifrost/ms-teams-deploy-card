@@ -10,7 +10,7 @@ const run = async () => {
 
   const octokit = new GitHub(githubToken);
   const commit = await (octokit as any).repos.getCommit({
-    owner: repo.owner,
+    owner: process.env.GITHUB_ACTOR,
     repo: repo.repo,
     ref: sha
   });
