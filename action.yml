@@ -1,0 +1,27 @@
+name: Microsoft Teams Deploy Card
+author: Project Toko Bifrost
+description: Notify your Teams channel with a beautiful, comprehensive deployment card
+
+inputs:
+  webhook-uri:
+    description: Microsoft Teams webhook URI
+    required: true
+  github_token:
+    description: Github token
+    required: true
+  deploy-title:
+    description: Deployment title
+    required: false
+    default: Github Actions CI
+  allowed-file-len:
+    description: Allowed number of files to display
+    required: false
+    default: 7
+
+outputs:
+  time:
+    description: Deployment time
+
+runs:
+  using: node12
+  main: dist/index.js

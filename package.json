@@ -1,0 +1,21 @@
+{
+  "name": "ms-teams-deploy-card",
+  "version": "1.0.0",
+  "description": "Microsoft Teams Deploy Card",
+  "main": "index.ts",
+  "repository": "https://github.com/toko-bifrost/ms-teams-deploy-card",
+  "author": "Aldwyn Cabarrubias",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.21.0",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+    "ncc": "ncc build index.ts"
+  }
+}
