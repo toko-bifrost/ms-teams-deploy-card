@@ -28,7 +28,7 @@ const run = async () => {
           `[${file.filename}](${file.blob_url}) (${file.changes} changes)`
       );
 
-    let filesToDisplay = "*" + filesChanged.join("\n\n* ");
+    let filesToDisplay = "* " + filesChanged.join("\n\n* ");
     if (commit.data.files.length > 7) {
       const moreLen = commit.data.files.length - 7;
       filesToDisplay += `\n\n* and [${commit.data.html_url} more files](${moreLen}) changed`;
@@ -36,7 +36,7 @@ const run = async () => {
 
     const branchUrl = `https://github.com/${params.repo}/tree/${ref}`;
     const author = commit.data.author;
-    const time = new Date().toTimeString();
+    const now = new Date().toUTCString();
     const sections = [
       {
         facts: [
@@ -69,10 +69,10 @@ const run = async () => {
         ],
         activityTitle: `**Deployment CI ${process.env.GITHUB_RUN_NUMBER} (commit ${params.ref})**`,
         activityImage: author.avatar_url,
-        activitySubtitle: `by [@${author.gravatar_id}](${author.html_url}) on ${time}`
+        activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${now}`
       }
     ];
-    setOutput("time", time);
+    setOutput("time", now);
     const response = await fetch(webhookUri, {
       method: "POST",
       headers: {
@@ -80,7 +80,7 @@ const run = async () => {
       },
       body: JSON.stringify({ summary, sections })
     });
-    console.log(`The event payload: ${response.json()}`);
+    console.log("The event payload: ", response.json());
   } else {
     setFailed(
       "Cannot process without variables GITHUB_ACTOR, GITHUB_REPOSITORY, GITHUB_SHA, and GITHUB_REF."
