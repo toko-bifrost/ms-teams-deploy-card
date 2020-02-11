@@ -9,7 +9,7 @@
   "private": false,
   "dependencies": {
     "@actions/core": "^1.2.2",
-    "@actions/github": "^2.1.0"
+    "@octokit/rest": "^16.43.1"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.21.0",

@@ -1,77 +1,91 @@
 import { getInput, setOutput, setFailed } from "@actions/core";
-import { GitHub, context } from "@actions/github";
+import { Octokit } from "@octokit/rest";
 
 const run = async () => {
-  const { repo, ref, payload, sha } = context;
   const webhookUri = getInput("webhook-uri");
   const githubToken = getInput("github-token");
   const summary = getInput("deploy-title");
   const allowedFileLen = parseInt(getInput("allowed-file-len"));
 
-  const octokit = new GitHub(githubToken);
-  const commit = await (octokit as any).repos.getCommit({
-    owner: process.env.GITHUB_ACTOR,
-    repo: repo.repo,
-    ref: sha
-  });
+  const octokit = new Octokit({ auth: githubToken });
+  if (
+    process.env.GITHUB_ACTOR &&
+    process.env.GITHUB_REPOSITORY &&
+    process.env.GITHUB_SHA &&
+    process.env.GITHUB_REF
+  ) {
+    const params = {
+      owner: process.env.GITHUB_ACTOR,
+      repo: process.env.GITHUB_REPOSITORY,
+      ref: process.env.GITHUB_SHA
+    };
+    const commit = await octokit.repos.getCommit(params);
 
-  const branchUrl = `${payload.repository?.full_name}/tree/${ref}`;
-  const filesChanged = commit.files
-    .slice(0, allowedFileLen)
-    .map(
-      (file: any) =>
-        `[${file.filename}](${file.blob_url}) (${file.changes} changes)`
-    );
-  let filesToDisplay = "*" + filesChanged.join("\n\n* ");
-  if (commit.files.length > 7) {
-    const moreLen = commit.files.length - 7;
-    filesToDisplay += `\n\n* and [${commit.html_url} more files](${moreLen}) changed`;
-  }
-  const sections = [
-    {
-      facts: [
-        {
-          name: "Commit message:",
-          value: `<notextile>${commit.commit.message}</notextile>`
-        },
-        {
-          name: "Repository & branch:",
-          value: `[${branchUrl}](${branchUrl})`
-        },
-        {
-          name: "Files changed:",
-          value: filesToDisplay
-        }
-      ],
-      potentialAction: [
-        {
-          "@context": "http://schema.org",
-          target: [process.env.GITHUB_RUN_NUMBER],
-          "@type": "ViewAction",
-          name: "View deploy status"
-        },
-        {
-          "@context": "http://schema.org",
-          target: [commit.html_url],
-          "@type": "ViewAction",
-          name: "Review commit diffs"
-        }
-      ],
-      activityTitle: `**Deployment CI ${process.env.GITHUB_RUN_NUMBER} (commit ${sha})**`,
-      activityImage: commit.author.avatar_url,
-      activitySubtitle: `by [${commit.commit.author.name} (@${commit.author.html_url})](${commit.author.login}) on ${commit.last_modified}`
+    const filesChanged = commit.data.files
+      .slice(0, allowedFileLen)
+      .map(
+        (file: any) =>
+          `[${file.filename}](${file.blob_url}) (${file.changes} changes)`
+      );
+
+    let filesToDisplay = "*" + filesChanged.join("\n\n* ");
+    if (commit.data.files.length > 7) {
+      const moreLen = commit.data.files.length - 7;
+      filesToDisplay += `\n\n* and [${commit.data.html_url} more files](${moreLen}) changed`;
     }
-  ];
-  const time = new Date().toTimeString();
-  setOutput("time", time);
-  const response = await fetch(webhookUri, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ summary, sections })
-  });
-  console.log(`The event payload: ${response.json()}`);
+
+    const branchUrl = `https://github.com/${params.repo}/tree/${process.env.GITHUB_REF}`;
+    const author = commit.data.author;
+    const time = new Date().toTimeString();
+    const sections = [
+      {
+        facts: [
+          {
+            name: "Commit message:",
+            value: `<notextile>${commit.data.commit.message}</notextile>`
+          },
+          {
+            name: "Repository & branch:",
+            value: `[${branchUrl}](${branchUrl})`
+          },
+          {
+            name: "Files changed:",
+            value: filesToDisplay
+          }
+        ],
+        potentialAction: [
+          {
+            "@context": "http://schema.org",
+            target: [process.env.GITHUB_RUN_NUMBER],
+            "@type": "ViewAction",
+            name: "View deploy status"
+          },
+          {
+            "@context": "http://schema.org",
+            target: [commit.data.html_url],
+            "@type": "ViewAction",
+            name: "Review commit diffs"
+          }
+        ],
+        activityTitle: `**Deployment CI ${process.env.GITHUB_RUN_NUMBER} (commit ${params.ref})**`,
+        activityImage: author.avatar_url,
+        activitySubtitle: `by [@${author.gravatar_id}](${author.html_url}) on ${time}`
+      }
+    ];
+    setOutput("time", time);
+    const response = await fetch(webhookUri, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ summary, sections })
+    });
+    console.log(`The event payload: ${response.json()}`);
+  } else {
+    setFailed(
+      "Cannot process without variables GITHUB_ACTOR, GITHUB_REPOSITORY, GITHUB_SHA, and GITHUB_REF."
+    );
+  }
 };
 
 try {
