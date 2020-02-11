@@ -7566,11 +7566,10 @@ const run = async () => {
         process.env.GITHUB_REPOSITORY &&
         process.env.GITHUB_SHA &&
         process.env.GITHUB_REF) {
-        const params = {
-            owner: process.env.GITHUB_ACTOR,
-            repo: process.env.GITHUB_REPOSITORY,
-            ref: process.env.GITHUB_SHA
-        };
+        const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+        const sha = process.env.GITHUB_SHA;
+        const ref = process.env.GITHUB_REF;
+        const params = { owner, repo, ref: sha };
         const commit = await octokit.repos.getCommit(params);
         const filesChanged = commit.data.files
             .slice(0, allowedFileLen)
@@ -7580,7 +7579,7 @@ const run = async () => {
             const moreLen = commit.data.files.length - 7;
             filesToDisplay += `\n\n* and [${commit.data.html_url} more files](${moreLen}) changed`;
         }
-        const branchUrl = `https://github.com/${params.repo}/tree/${process.env.GITHUB_REF}`;
+        const branchUrl = `https://github.com/${params.repo}/tree/${ref}`;
         const author = commit.data.author;
         const time = new Date().toTimeString();
         const sections = [
