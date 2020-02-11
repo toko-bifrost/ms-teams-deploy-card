@@ -8,6 +8,7 @@ const run = async () => {
   const allowedFileLen = parseInt(getInput("allowed-file-len"));
 
   const octokit = new Octokit({ auth: githubToken });
+  console.log(process.env);
   if (
     process.env.GITHUB_ACTOR &&
     process.env.GITHUB_REPOSITORY &&

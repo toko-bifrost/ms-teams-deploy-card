@@ -7562,16 +7562,17 @@ const run = async () => {
     const summary = core_1.getInput("deploy-title");
     const allowedFileLen = parseInt(core_1.getInput("allowed-file-len"));
     const octokit = new rest_1.Octokit({ auth: githubToken });
+    console.log(process.env);
     if (process.env.GITHUB_ACTOR &&
         process.env.GITHUB_REPOSITORY &&
-        process.env.GITHUB_SHA) {
+        process.env.GITHUB_SHA &&
+        process.env.GITHUB_REF) {
         const params = {
             owner: process.env.GITHUB_ACTOR,
             repo: process.env.GITHUB_REPOSITORY,
             ref: process.env.GITHUB_SHA
         };
         const commit = await octokit.repos.getCommit(params);
-        const branchUrl = `https://github.com/${params.repo}/tree/${process.env.GITHUB_REF}`;
         const filesChanged = commit.data.files
             .slice(0, allowedFileLen)
             .map((file) => `[${file.filename}](${file.blob_url}) (${file.changes} changes)`);
@@ -7580,7 +7581,9 @@ const run = async () => {
             const moreLen = commit.data.files.length - 7;
             filesToDisplay += `\n\n* and [${commit.data.html_url} more files](${moreLen}) changed`;
         }
+        const branchUrl = `https://github.com/${params.repo}/tree/${process.env.GITHUB_REF}`;
         const author = commit.data.author;
+        const time = new Date().toTimeString();
         const sections = [
             {
                 facts: [
@@ -7613,10 +7616,9 @@ const run = async () => {
                 ],
                 activityTitle: `**Deployment CI ${process.env.GITHUB_RUN_NUMBER} (commit ${params.ref})**`,
                 activityImage: author.avatar_url,
-                activitySubtitle: `by [@${author.gravatar_id}](${author.html_url}) on ${new Date()}`
+                activitySubtitle: `by [@${author.gravatar_id}](${author.html_url}) on ${time}`
             }
         ];
-        const time = new Date().toTimeString();
         core_1.setOutput("time", time);
         const response = await fetch(webhookUri, {
             method: "POST",
@@ -7628,7 +7630,7 @@ const run = async () => {
         console.log(`The event payload: ${response.json()}`);
     }
     else {
-        core_1.setFailed("Cannot process without variables GITHUB_ACTOR, GITHUB_REPOSITORY, or GITHUB_SHA.");
+        core_1.setFailed("Cannot process without variables GITHUB_ACTOR, GITHUB_REPOSITORY, GITHUB_SHA, and GITHUB_REF.");
     }
 };
 try {
