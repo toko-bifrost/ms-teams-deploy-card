@@ -1,0 +1,18 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Notify dedicated teams channel
+      uses: ./
+      with:
+        webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+        deploy-title: Github Actions CI
+        github-token: ${{ secrets.CI_GITHUB_TOKEN }}
