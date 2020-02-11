@@ -7561,8 +7561,7 @@ const run = async () => {
     const githubToken = core_1.getInput("github-token");
     const summary = core_1.getInput("deploy-title");
     const allowedFileLen = parseInt(core_1.getInput("allowed-file-len"));
-    const octokit = new rest_1.Octokit({ auth: githubToken });
-    console.log(process.env);
+    const octokit = new rest_1.Octokit({ auth: `token ${githubToken}` });
     if (process.env.GITHUB_ACTOR &&
         process.env.GITHUB_REPOSITORY &&
         process.env.GITHUB_SHA &&

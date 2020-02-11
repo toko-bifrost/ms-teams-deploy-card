@@ -7,8 +7,7 @@ const run = async () => {
   const summary = getInput("deploy-title");
   const allowedFileLen = parseInt(getInput("allowed-file-len"));
 
-  const octokit = new Octokit({ auth: githubToken });
-  console.log(process.env);
+  const octokit = new Octokit({ auth: `token ${githubToken}` });
   if (
     process.env.GITHUB_ACTOR &&
     process.env.GITHUB_REPOSITORY &&
