@@ -1,6 +1,6 @@
 # Microsoft Teams Deploy Card
 
-![CI](https://github.com/toko-bifrost/ms-teams-deploy-card/workflows/CI/badge.svg)
+![MS Teams Deploy Card](https://github.com/toko-bifrost/ms-teams-deploy-card/workflows/MS%20Teams%20Deploy%20Card/badge.svg)
 
 A comprehensive notification card in Microsoft Teams for your deployments.
 
@@ -8,7 +8,7 @@ A comprehensive notification card in Microsoft Teams for your deployments.
 
 1. Add the following to your repository's configs on Settings > Secrets.
 
-   - `CI_GITHUB_TOKEN` - your [Personal Access Token](https://github.com/settings/tokens) to assume basic authentication on Github APIs. This should at least have full permissions to `repo` and `workflow`.
+   - `CI_GITHUB_TOKEN` - your [Personal Access Token](https://github.com/settings/tokens) to assume the basic authentication and other authorizations in Github API. This should at least have full permissions to `repo` and `workflow`.
    - `MS_TEAMS_WEBHOOK_URI` - the [webhook URI](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook) of the dedicated Microsoft Teams channel for notification.
 
 2. Add this `step` on your workflow code as one of the earlier `steps`:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Notify dedicated teams channel
-        uses: toko-bifrost/ms-teams-deploy-card@1.0.0 # or "./" if you need to use this as a local set-up
+        uses: toko-bifrost/ms-teams-deploy-card@1.0.0 #  or "./" if in a local set-up
         with:
           github-token: ${{ secrets.CI_GITHUB_TOKEN }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -45,3 +45,4 @@ jobs:
 2. Install JS dependencies via `yarn install` or `npm install`.
 3. Before pushing you changes, execute `yarn ncc` to create a build on `dist`.
 4. Do not remove the `dist` repository. Ever.
+5. Check the Actions tab for the errors if there are any.
