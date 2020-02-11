@@ -1,5 +1,6 @@
 import { getInput, setOutput, setFailed } from "@actions/core";
 import { Octokit } from "@octokit/rest";
+import fetch from "node-fetch";
 
 const run = async () => {
   const webhookUri = getInput("webhook-uri");

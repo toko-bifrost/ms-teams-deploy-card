@@ -9,9 +9,11 @@
   "private": false,
   "dependencies": {
     "@actions/core": "^1.2.2",
-    "@octokit/rest": "^16.43.1"
+    "@octokit/rest": "^16.43.1",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.5.4",
     "@zeit/ncc": "^0.21.0",
     "typescript": "^3.7.5"
   },

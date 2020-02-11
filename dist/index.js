@@ -7553,9 +7553,13 @@ module.exports = (promise, onFinally) => {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(470);
 const rest_1 = __webpack_require__(0);
+const node_fetch_1 = __importDefault(__webpack_require__(454));
 const run = async () => {
     const webhookUri = core_1.getInput("webhook-uri");
     const githubToken = core_1.getInput("github-token");
@@ -7618,7 +7622,7 @@ const run = async () => {
             }
         ];
         core_1.setOutput("time", time);
-        const response = await fetch(webhookUri, {
+        const response = await node_fetch_1.default(webhookUri, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
