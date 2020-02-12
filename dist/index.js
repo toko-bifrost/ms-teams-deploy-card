@@ -7574,6 +7574,7 @@ const run = async () => {
         const sha = process.env.GITHUB_SHA;
         const ref = process.env.GITHUB_REF;
         const params = { owner, repo, ref: sha };
+        const runId = process.env.GITHUB_RUN_ID;
         const commit = await octokit.repos.getCommit(params);
         const filesChanged = commit.data.files
             .slice(0, allowedFileLen)
@@ -7591,7 +7592,7 @@ const run = async () => {
                 facts: [
                     {
                         name: "Commit message:",
-                        value: `<notextile>${commit.data.commit.message}</notextile>`
+                        value: commit.data.commit.message
                     },
                     {
                         name: "Repository & branch:",
@@ -7605,7 +7606,7 @@ const run = async () => {
                 potentialAction: [
                     {
                         "@context": "http://schema.org",
-                        target: [process.env.GITHUB_RUN_NUMBER],
+                        target: [`https://github.com/${params.repo}/runs/${runId}`],
                         "@type": "ViewAction",
                         name: "View deploy status"
                     },
