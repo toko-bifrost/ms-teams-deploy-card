@@ -21,6 +21,14 @@ const run = async () => {
   const runNum = process.env.GITHUB_RUN_NUMBER || "";
   const params = { owner, repo, ref: sha };
   const branchUrl = `https://github.com/${params.owner}/${params.repo}/tree/${ref}`;
+  console.log(
+    "Workflow run information: ",
+    JSON.stringify(
+      { ...params, branch: branchUrl, runId, runNum },
+      undefined,
+      2
+    )
+  );
 
   const octokit = new Octokit({ auth: `token ${githubToken}` });
   const commit = await octokit.repos.getCommit(params);
@@ -76,14 +84,15 @@ const run = async () => {
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
   ];
-  const response = await fetch(webhookUri, {
+  fetch(webhookUri, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ summary, sections })
-  });
-  console.log("The event payload: ", response.json());
+  })
+    .then(console.log)
+    .catch(console.error);
 };
 
 try {
