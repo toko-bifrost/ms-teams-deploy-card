@@ -3,6 +3,16 @@ import { Octokit } from "@octokit/rest";
 import fetch from "node-fetch";
 import moment from "moment-timezone";
 
+const escapeMarkdownTokens = (text: string) =>
+  text
+    .replace(/\_/g, "\\_")
+    .replace(/\*/g, "\\*")
+    .replace(/\|/g, "\\|")
+    .replace(/#/g, "\\#")
+    .replace(/-/g, "\\-")
+    .replace(/~/g, "\\~")
+    .replace(/>/g, "\\>");
+
 const run = async () => {
   const webhookUri = getInput("webhook-uri");
   const githubToken = getInput("github-token");
@@ -52,7 +62,7 @@ const run = async () => {
       facts: [
         {
           name: "Commit message:",
-          value: commit.data.commit.message
+          value: escapeMarkdownTokens(commit.data.commit.message)
         },
         {
           name: "Repository & branch:",
@@ -60,7 +70,7 @@ const run = async () => {
         },
         {
           name: "Files changed:",
-          value: filesToDisplay
+          value: escapeMarkdownTokens(filesToDisplay)
         }
       ],
       potentialAction: [
@@ -70,7 +80,7 @@ const run = async () => {
             `https://github.com/${params.owner}/${params.repo}/actions/runs/${runId}`
           ],
           "@type": "ViewAction",
-          name: "View deploy status"
+          name: "View build/deploy status"
         },
         {
           "@context": "http://schema.org",
