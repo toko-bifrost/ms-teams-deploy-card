@@ -21,6 +21,10 @@ inputs:
     description: Timezone for notification timezone
     required: false
     default: UTC
+  markdown:
+    description:
+    required: false
+    default: false
 
 runs:
   using: node12
