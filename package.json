@@ -10,14 +10,16 @@
   "dependencies": {
     "@actions/core": "^1.2.2",
     "@octokit/rest": "^16.43.1",
+    "moment-timezone": "^0.5.27",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/moment-timezone": "^0.5.12",
     "@types/node-fetch": "^2.5.4",
     "@zeit/ncc": "^0.21.0",
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "ncc": "ncc build index.ts"
+    "ncc": "ncc build index.ts -m"
   }
 }

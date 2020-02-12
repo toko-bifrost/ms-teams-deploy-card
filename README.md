@@ -37,7 +37,8 @@ jobs:
    - `github-token` - (required) the value of `CI_GITHUB_TOKEN`
    - `webhook-uri` - (required) the value of `MS_TEAMS_WEBHOOK_URI`
    - `deploy-title` - (optional, defaults to `Github Actions CI`),
-   - `allowed-file-len` - (optional, defaults to `7`),
+   - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display
+   - `timezone` - (optional, defaults to `UTC`), a [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. "Australia/Sydney"
 
 ### Local Set-up
 
