@@ -59,7 +59,7 @@ const run = async () => {
         {
           "@context": "http://schema.org",
           target: [
-            `https://github.com/${params.owner}/${params.repo}/runs/${runId}`
+            `https://github.com/${params.owner}/${params.repo}/actions/runs/${runId}`
           ],
           "@type": "ViewAction",
           name: "View deploy status"
