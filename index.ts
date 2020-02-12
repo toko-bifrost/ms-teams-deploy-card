@@ -1,16 +1,16 @@
-import { getInput, setOutput, setFailed } from "@actions/core";
+import { getInput, setFailed } from "@actions/core";
 import { Octokit } from "@octokit/rest";
 import fetch from "node-fetch";
 import moment from "moment-timezone";
 
 const escapeMarkdownTokens = (text: string) =>
   text
+    .replace(/\n\s{1,}/g, "\n")
     .replace(/\_/g, "\\_")
     .replace(/\*/g, "\\*")
     .replace(/\|/g, "\\|")
     .replace(/#/g, "\\#")
     .replace(/-/g, "\\-")
-    .replace(/~/g, "\\~")
     .replace(/>/g, "\\>");
 
 const run = async () => {
@@ -47,13 +47,15 @@ const run = async () => {
     .slice(0, allowedFileLen)
     .map(
       (file: any) =>
-        `[${file.filename}](${file.blob_url}) (${file.changes} changes)`
+        `[${escapeMarkdownTokens(file.filename)}](${file.blob_url}) (${
+          file.changes
+        } changes)`
     );
 
   let filesToDisplay = "* " + filesChanged.join("\n\n* ");
   if (commit.data.files.length > 7) {
     const moreLen = commit.data.files.length - 7;
-    filesToDisplay += `\n\n* and [${commit.data.html_url} more files](${moreLen}) changed`;
+    filesToDisplay += `\n\n* and [${moreLen} more files](${commit.data.html_url}) changed`;
   }
 
   const author = commit.data.author;
@@ -70,7 +72,7 @@ const run = async () => {
         },
         {
           name: "Files changed:",
-          value: escapeMarkdownTokens(filesToDisplay)
+          value: filesToDisplay
         }
       ],
       potentialAction: [
