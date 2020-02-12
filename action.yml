@@ -1,6 +1,9 @@
 name: Microsoft Teams Deploy Card
 author: Project Toko Bifrost
 description: Notify your Teams channel with a beautiful, comprehensive deployment card
+branding:
+  icon: bell
+  color: purple
 
 inputs:
   webhook-uri:
