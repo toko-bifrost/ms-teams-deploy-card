@@ -9,11 +9,6 @@ const run = async () => {
   const summary = getInput("deploy-title") || "Github Actions CI";
   const timezone = getInput("timezone") || "UTC";
   const allowedFileLen = parseInt(getInput("allowed-file-len") || "7");
-  // const markdown =
-  //   getInput("markdown")
-  //     .trim()
-  //     .toLowerCase() === "true" || false;
-  const markdown = false;
 
   const nowFmt = moment()
     .tz(timezone)
@@ -54,7 +49,6 @@ const run = async () => {
   const author = commit.data.author;
   const sections = [
     {
-      markdown,
       facts: [
         {
           name: "Commit message:",

@@ -39,7 +39,6 @@ jobs:
    - `deploy-title` - (optional, defaults to `Github Actions CI`),
    - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display
    - `timezone` - (optional, defaults to `UTC`), a [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. "Australia/Sydney"
-   - `markdown` - (optional, defaults to `false`), set to `true` if you need to read the commit messages and filenames in markdown format
 
 ### Local Set-up
 
