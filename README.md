@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Notify dedicated teams channel
-        uses: toko-bifrost/ms-teams-deploy-card@2.0.0 #  or "./" if in a local set-up
+        uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         with:
           github-token: ${{ secrets.CI_GITHUB_TOKEN }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
