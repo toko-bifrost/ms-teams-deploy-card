@@ -5,7 +5,7 @@ import moment from "moment-timezone";
 
 const escapeMarkdownTokens = (text: string) =>
   text
-    .replace(/\n\s{1,}/g, "\n")
+    .replace(/\n\ {1,}/g, "\n ")
     .replace(/\_/g, "\\_")
     .replace(/\*/g, "\\*")
     .replace(/\|/g, "\\|")
@@ -29,6 +29,7 @@ const run = async () => {
   const ref = process.env.GITHUB_REF || "";
   const runId = process.env.GITHUB_RUN_ID || "";
   const runNum = process.env.GITHUB_RUN_NUMBER || "";
+  const eventName = process.env.GITHUB_EVENT_NAME || "";
   const params = { owner, repo, ref: sha };
   const branchUrl = `https://github.com/${params.owner}/${params.repo}/tree/${ref}`;
   console.log(
@@ -63,6 +64,10 @@ const run = async () => {
     {
       facts: [
         {
+          name: "Event name & type:",
+          value: "`" + eventName.toUpperCase() + "`"
+        },
+        {
           name: "Commit message:",
           value: escapeMarkdownTokens(commit.data.commit.message)
         },
@@ -91,7 +96,7 @@ const run = async () => {
           name: "Review commit diffs"
         }
       ],
-      activityTitle: `**Deployment CI ${runNum} (commit ${sha})**`,
+      activityTitle: `**CI ${runNum} (commit ${sha.substr(0, 7)})**`,
       activityImage: author.avatar_url,
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
