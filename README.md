@@ -4,14 +4,12 @@
 
 A comprehensive notification card in Microsoft Teams for your deployments.
 
-### Usage:
+### Usage
 
 1. Add the following to your repository's configs on Settings > Secrets.
 
    - `CI_GITHUB_TOKEN` - your [Personal Access Token](https://github.com/settings/tokens) to assume the basic authentication and other authorizations in Github API. This should at least have full permissions to `repo` and `workflow`.
    - `MS_TEAMS_WEBHOOK_URI` - the [webhook URI](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook) of the dedicated Microsoft Teams channel for notification.
-   
-**NOTE**: Avoid naming your secrets with the prefix `GITHUB_` as this is reserved for Github Actions' environment variables only. Better stick to `CI_GITHUB_TOKEN`.
 
 2. Add this `step` on your workflow code as one of the earlier `steps`:
 
@@ -28,7 +26,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Notify dedicated teams channel
-        uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        uses: toko-bifrost/ms-teams-deploy-card@2.1.1 #  or "./" if in a local set-up
         with:
           github-token: ${{ secrets.CI_GITHUB_TOKEN }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -49,3 +47,8 @@ jobs:
 3. Before pushing you changes, execute `yarn ncc` to create a build on `dist`.
 4. Do not remove the `dist` repository. Ever.
 5. Check the Actions tab for the errors if there are any.
+
+### Known Issues
+
+* Avoid naming your secrets with the prefix `GITHUB_` as secrets are being used as environment variables, and they reserved for Github Actions' use only. Better stick with `CI_GITHUB_TOKEN`.
+* As this is still in development, always use the working latest version from the `Releases`, as they have more bug fixes and added features.
