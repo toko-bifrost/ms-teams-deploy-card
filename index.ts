@@ -15,6 +15,7 @@ const escapeMarkdownTokens = (text: string) =>
 
 const run = async () => {
   const webhookUri = getInput("webhook-uri");
+  const githubToken = getInput("github-token");
   const summary = getInput("deploy-title") || "Github Actions CI";
   const timezone = getInput("timezone") || "UTC";
   const allowedFileLen = parseInt(getInput("allowed-file-len") || "7");
@@ -24,7 +25,6 @@ const run = async () => {
     .format("dddd, MMMM Do YYYY, h:mm:ss a z");
 
   const [owner, repo] = (process.env.GITHUB_REPOSITORY || "").split("/");
-  const githubToken = process.env.GITHUB_TOKEN || "";
   const sha = process.env.GITHUB_SHA || "";
   const ref = process.env.GITHUB_REF || "";
   const runId = process.env.GITHUB_RUN_ID || "";
