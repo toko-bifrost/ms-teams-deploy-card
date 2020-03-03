@@ -25,12 +25,15 @@ jobs:
       - name: Notify dedicated teams channel
         uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
 ```
 
 3. Tweak the following configurations
-   - `github-token` - (required), set `${{ secrets.GITHUB_TOKEN }}` or a manually added secret with more Github API permissions, e.g. `${{ secrets.<custom secret here> }}`
+   - `github-token` - (required), this can be set to the following:
+     - `${{ github.token }}`
+     - `${{ secrets.GITHUB_TOKEN }}`
+     - a manually added secret with more Github API permissions, e.g. `${{ secrets.<custom secret here> }}`
    - `webhook-uri` - (required), the value of `MS_TEAMS_WEBHOOK_URI`
    - `deploy-title` - (optional, defaults to `Github Actions CI`),
    - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display
