@@ -14,11 +14,14 @@ const escapeMarkdownTokens = (text: string) =>
     .replace(/>/g, "\\>");
 
 const run = async () => {
-  const webhookUri = getInput("webhook-uri");
-  const githubToken = getInput("github-token");
+  const githubToken = getInput("github-token", { required: true });
+  const webhookUri = getInput("webhook-uri", { required: true });
   const summary = getInput("deploy-title") || "Github Actions CI";
   const timezone = getInput("timezone") || "UTC";
-  const allowedFileLen = parseInt(getInput("allowed-file-len") || "7");
+  const allowedFileLen = getInput("allowed-file-len").toLowerCase();
+  const allowedFileLenParsed = parseInt(
+    allowedFileLen === "" ? "7" : allowedFileLen
+  );
 
   const nowFmt = moment()
     .tz(timezone)
@@ -45,7 +48,7 @@ const run = async () => {
   const commit = await octokit.repos.getCommit(params);
 
   const filesChanged = commit.data.files
-    .slice(0, allowedFileLen)
+    .slice(0, allowedFileLenParsed)
     .map(
       (file: any) =>
         `[${escapeMarkdownTokens(file.filename)}](${file.blob_url}) (${
