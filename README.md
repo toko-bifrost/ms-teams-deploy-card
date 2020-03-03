@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       # this is the new step
       - name: Notify dedicated teams channel
-        uses: toko-bifrost/ms-teams-deploy-card@2.1.1 #  or "./" if in a local set-up
+        uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -51,5 +51,5 @@ jobs:
 
 ### Known Issues
 
-- Avoid naming your secrets with the prefix `GITHUB_` as secrets are being used as environment variables, and they reserved for Github Actions' use only. Better stick with `CI_GITHUB_TOKEN`.
+- Avoid naming your secrets with the prefix `GITHUB_` as secrets are being used as environment variables, and they are reserved for Github Actions' use only. Better stick with `CI_GITHUB_TOKEN`.
 - As this is still in development, always use the working latest version from the `Releases`, as they have more bug fixes and added features.
