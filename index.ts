@@ -117,7 +117,7 @@ const run = async () => {
       activityTitle: `**CI #${runNum} (commit ${sha.substr(
         0,
         7
-      )})** on [${repoName}]`,
+      )})** on [${repoName}](${repoUrl})`,
       activityImage: author.avatar_url,
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
