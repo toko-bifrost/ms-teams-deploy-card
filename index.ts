@@ -22,6 +22,7 @@ const run = async () => {
   const allowedFileLenParsed = parseInt(
     allowedFileLen === "" ? "7" : allowedFileLen
   );
+  console.log(allowedFileLen, allowedFileLen);
 
   const nowFmt = moment()
     .tz(timezone)
