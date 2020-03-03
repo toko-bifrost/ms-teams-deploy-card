@@ -15,7 +15,6 @@ const escapeMarkdownTokens = (text: string) =>
 
 const run = async () => {
   const webhookUri = getInput("webhook-uri");
-  const githubToken = getInput("github-token");
   const summary = getInput("deploy-title") || "Github Actions CI";
   const timezone = getInput("timezone") || "UTC";
   const allowedFileLen = parseInt(getInput("allowed-file-len") || "7");
@@ -25,6 +24,7 @@ const run = async () => {
     .format("dddd, MMMM Do YYYY, h:mm:ss a z");
 
   const [owner, repo] = (process.env.GITHUB_REPOSITORY || "").split("/");
+  const githubToken = process.env.GITHUB_TOKEN || "";
   const sha = process.env.GITHUB_SHA || "";
   const ref = process.env.GITHUB_REF || "";
   const runId = process.env.GITHUB_RUN_ID || "";
@@ -53,8 +53,11 @@ const run = async () => {
         } changes)`
     );
 
-  let filesToDisplay = "* " + filesChanged.join("\n\n* ");
-  if (commit.data.files.length > 7) {
+  let filesToDisplay = "";
+  if (commit.data.files.length === 0) {
+    filesToDisplay = "*No files changed.*";
+  } else if (commit.data.files.length > 7) {
+    filesToDisplay = "* " + filesChanged.join("\n\n* ");
     const moreLen = commit.data.files.length - 7;
     filesToDisplay += `\n\n* and [${moreLen} more files](${commit.data.html_url}) changed`;
   }
@@ -64,7 +67,7 @@ const run = async () => {
     {
       facts: [
         {
-          name: "Event name & type:",
+          name: "Event type:",
           value: "`" + eventName.toUpperCase() + "`"
         },
         {
@@ -96,11 +99,12 @@ const run = async () => {
           name: "Review commit diffs"
         }
       ],
-      activityTitle: `**CI ${runNum} (commit ${sha.substr(0, 7)})**`,
+      activityTitle: `**CI #${runNum} (commit ${sha.substr(0, 7)})**`,
       activityImage: author.avatar_url,
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
   ];
+
   fetch(webhookUri, {
     method: "POST",
     headers: {
@@ -108,7 +112,12 @@ const run = async () => {
     },
     body: JSON.stringify({ summary, sections })
   })
-    .then(console.log)
+    .then(() => {
+      console.log("Event type:", eventName.toUpperCase());
+      console.log("Commit message:", commit.data.commit.message);
+      console.log("Repository & branch:", branchUrl);
+      console.log("Files changed:\n" + filesToDisplay);
+    })
     .catch(console.error);
 };
 

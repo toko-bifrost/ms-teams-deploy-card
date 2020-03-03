@@ -12,7 +12,6 @@ jobs:
       - name: Notify dedicated teams channel
         uses: ./
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
           deploy-title: Github Actions CI
