@@ -22,7 +22,6 @@ const run = async () => {
   const allowedFileLenParsed = parseInt(
     allowedFileLen === "" ? "7" : allowedFileLen
   );
-  console.log(allowedFileLen, allowedFileLen);
 
   const nowFmt = moment()
     .tz(timezone)
@@ -60,10 +59,12 @@ const run = async () => {
   let filesToDisplay = "";
   if (commit.data.files.length === 0) {
     filesToDisplay = "*No files changed.*";
-  } else if (commit.data.files.length > 7) {
+  } else {
     filesToDisplay = "* " + filesChanged.join("\n\n* ");
-    const moreLen = commit.data.files.length - 7;
-    filesToDisplay += `\n\n* and [${moreLen} more files](${commit.data.html_url}) changed`;
+    if (commit.data.files.length > 7) {
+      const moreLen = commit.data.files.length - 7;
+      filesToDisplay += `\n\n* and [${moreLen} more files](${commit.data.html_url}) changed`;
+    }
   }
 
   const author = commit.data.author;
