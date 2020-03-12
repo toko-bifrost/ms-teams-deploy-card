@@ -44,6 +44,7 @@ const formatFilesToDisplay = (
 const run = async () => {
   const githubToken = getInput("github-token", { required: true });
   const webhookUri = getInput("webhook-uri", { required: true });
+  const status = getInput('status', { required: true });
   const summary = getInput("deploy-title") || "Github Actions CI";
   const timezone = getInput("timezone") || "UTC";
   const allowedFileLen = getInput("allowed-file-len").toLowerCase();
@@ -83,6 +84,10 @@ const run = async () => {
   const sections = [
     {
       facts: [
+        {
+          name: "Status:",
+          value: status.toUpperCase()
+        },
         {
           name: "Event type:",
           value: "`" + eventName.toUpperCase() + "`"
@@ -131,6 +136,7 @@ const run = async () => {
     body: JSON.stringify({ summary, sections })
   })
     .then(() => {
+      console.log("Action Status:", status.toUpperCase());
       console.log("Event type:", eventName.toUpperCase());
       console.log("Commit message:", commit.data.commit.message);
       console.log("Repository & branch:", branchUrl);
