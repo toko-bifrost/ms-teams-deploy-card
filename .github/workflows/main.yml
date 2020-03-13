@@ -12,6 +12,7 @@ jobs:
       - name: Notify dedicated teams channel
         uses: ./
         with:
+          status: ${{ job.status }}
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney

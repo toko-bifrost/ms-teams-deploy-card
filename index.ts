@@ -66,9 +66,10 @@ const run = async () => {
   const repoName = params.owner + "/" + params.repo;
   const repoUrl = `https://github.com/${repoName}`;
   const branchUrl = `${repoUrl}/tree/${ref}`;
+  const branchName = (ref).split("/")[2];
   console.log(
     "Workflow run information: ",
-    JSON.stringify({ ...params, branchUrl, runId, runNum }, undefined, 2)
+    JSON.stringify({ ...params, branchUrl, runId, runNum, branchName }, undefined, 2)
   );
 
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -91,6 +92,10 @@ const run = async () => {
         {
           name: "Event type:",
           value: "`" + eventName.toUpperCase() + "`"
+        },
+        {
+          name: "Branch:",
+          value: branchName.toUpperCase()
         },
         {
           name: "Commit message:",
@@ -119,10 +124,10 @@ const run = async () => {
           name: "Review commit diffs"
         }
       ],
-      activityTitle: `**CI #${runNum} (commit ${sha.substr(
+      activityTitle: `**${repoName} #${runNum} (commit ${sha.substr(
         0,
         7
-      )})** on [${repoName}](${repoUrl})`,
+      )})**`,
       activityImage: author.avatar_url,
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
