@@ -128,7 +128,7 @@ const run = async () => {
         0,
         7
       )})**`,
-      activityImage: author.avatar_url,
+      activityImage: author.avatar_url ? author.avatar_url : null,
       activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
     }
   ];
