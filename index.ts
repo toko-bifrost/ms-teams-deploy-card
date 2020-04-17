@@ -3,6 +3,9 @@ import { Octokit } from "@octokit/rest";
 import fetch from "node-fetch";
 import moment from "moment-timezone";
 
+const OCTOCAT_LOGO_URL =
+  "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
+
 const escapeMarkdownTokens = (text: string) =>
   text
     .replace(/\n\ {1,}/g, "\n ")
@@ -85,50 +88,50 @@ const run = async () => {
       facts: [
         {
           name: "Event type:",
-          value: "`" + eventName.toUpperCase() + "`"
+          value: "`" + eventName.toUpperCase() + "`",
         },
         {
           name: "Commit message:",
-          value: escapeMarkdownTokens(commit.data.commit.message)
+          value: escapeMarkdownTokens(commit.data.commit.message),
         },
         {
           name: "Repository & branch:",
-          value: `[${branchUrl}](${branchUrl})`
+          value: `[${branchUrl}](${branchUrl})`,
         },
         {
           name: "Files changed:",
-          value: filesToDisplay
-        }
+          value: filesToDisplay,
+        },
       ],
       potentialAction: [
         {
           "@context": "http://schema.org",
           target: [`${repoUrl}/actions/runs/${runId}`],
           "@type": "ViewAction",
-          name: "View build/deploy status"
+          name: "View build/deploy status",
         },
         {
           "@context": "http://schema.org",
           target: [commit.data.html_url],
           "@type": "ViewAction",
-          name: "Review commit diffs"
-        }
+          name: "Review commit diffs",
+        },
       ],
       activityTitle: `**CI #${runNum} (commit ${sha.substr(
         0,
         7
       )})** on [${repoName}](${repoUrl})`,
-      activityImage: author.avatar_url,
-      activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`
-    }
+      activityImage: author.avatar_url || OCTOCAT_LOGO_URL,
+      activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`,
+    },
   ];
 
   fetch(webhookUri, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ summary, sections })
+    body: JSON.stringify({ summary, sections }),
   })
     .then(() => {
       console.log("Event type:", eventName.toUpperCase());
