@@ -18,7 +18,7 @@ export function formatCozyLayout(
     activityTitle: `**CI #${process.env.GITHUB_RUN_NUMBER} (commit ${shortSha})** on [${process.env.GITHUB_REPOSITORY}](${repoUrl})`,
     activityImage: commit.data.author.avatar_url || OCTOCAT_LOGO_URL,
     activitySubtitle: `by [@${commit.data.author.login}](${commit.data.author.html_url}) on ${nowFmt}`,
-    activityText: `[View status](${statusUrl}) &nbsp; &nbsp; &nbsp; [Review commit diffs](${commit.data.html_url})`,
+    activityText: `[View status](${statusUrl}) &nbsp; &nbsp; [Review diffs](${commit.data.html_url})`,
   };
   webhookBody.sections = [section];
   return webhookBody;
