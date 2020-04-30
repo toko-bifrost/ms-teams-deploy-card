@@ -12,8 +12,7 @@ export function formatCompleteLayout(
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
   const webhookBody = formatCozyLayout(commit, timezone);
-  const section = new CardSection();
-  section.facts = [
+  webhookBody.sections[0].facts = [
     new Fact(
       "Event type:",
       "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
@@ -31,12 +30,11 @@ export function formatCompleteLayout(
       allowedFileLenParsed,
       commit.data.html_url
     );
-    section.facts?.push({
+    webhookBody.sections[0].facts?.push({
       name: "Files changed:",
       value: filesToDisplay,
     });
   }
 
-  webhookBody.sections?.push(section);
   return webhookBody;
 }

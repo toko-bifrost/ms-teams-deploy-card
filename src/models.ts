@@ -31,5 +31,5 @@ export class CardSection {
 export class WebhookBody {
   summary: string = "Github Actions CI";
   text?: string;
-  sections?: CardSection[];
+  sections: CardSection[] = [];
 }

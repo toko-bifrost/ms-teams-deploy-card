@@ -27,6 +27,6 @@ export function formatCozyLayout(
     activityImage: author.avatar_url || OCTOCAT_LOGO_URL,
     activitySubtitle: `by ${commit.data.commit.author.name} [(@${author.login})](${author.html_url}) on ${nowFmt}`,
   };
-  webhookBody.sections?.push(section);
+  webhookBody.sections = [section];
   return webhookBody;
 }
