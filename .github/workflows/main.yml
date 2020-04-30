@@ -15,5 +15,5 @@ jobs:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
-          layout: cozy
+          layout: compact
           include-files: false
