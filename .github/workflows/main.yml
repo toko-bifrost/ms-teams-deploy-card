@@ -16,4 +16,4 @@ jobs:
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
           layout: complete
-          include-files: true
+          include-files: false
