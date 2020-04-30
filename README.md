@@ -4,7 +4,23 @@
 
 A comprehensive notification card in Microsoft Teams for your deployments.
 
-![](screenshot.png)
+### Layouts
+
+#### Complete
+
+![](screenshots/layout-complete-with-files.png)
+
+#### Complete (without files)
+
+![](screenshots/layout-complete-without-files.png)
+
+#### Cozy
+
+![](screenshots/layout-cozy.png)
+
+### Compact
+
+![](screenshots/layout-compact.png)
 
 ### Usage
 
