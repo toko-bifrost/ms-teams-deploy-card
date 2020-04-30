@@ -15,7 +15,7 @@ A comprehensive notification card in Microsoft Teams for your deployments.
 ```yaml
 name: MS Teams Deploy Card
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -37,9 +37,10 @@ jobs:
      - `${{ secrets.GITHUB_TOKEN }}`
      - a manually added secret with more Github API permissions, e.g. `${{ secrets.<custom secret here> }}`
    - `webhook-uri` - (required), the value of `MS_TEAMS_WEBHOOK_URI`
-   - `deploy-title` - (optional, defaults to `Github Actions CI`),
    - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display
    - `timezone` - (optional, defaults to `UTC`), a [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. "Australia/Sydney"
+   - `layout` - (optional, defaults to `complete`), layout template (choices are `complete`, `cozy`, `compact`)
+   - `include-files` - (optional, defaults to `true`), include the list of files when `layout` is set to `complete`
 
 ### Local Set-up
 

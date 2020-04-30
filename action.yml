@@ -12,19 +12,23 @@ inputs:
   github-token:
     description: Github token
     required: true
-  deploy-title:
-    description: Deployment title
-    required: false
-    default: Github Actions CI
   allowed-file-len:
     description: Allowed number of files to display
     required: false
     default: 7
   timezone:
-    description: Timezone for notification timezone
+    description: Timezone for notification
     required: false
     default: UTC
+  layout:
+    description: Card layout (i.e. "complete", "cozy", "compact")
+    required: true
+    default: complete
+  include-files:
+    description: Only for complete layout; Set false to exclude list of files
+    required: false
+    default: true
 
 runs:
   using: node12
-  main: dist/index.js
+  main: dist/main/index.js

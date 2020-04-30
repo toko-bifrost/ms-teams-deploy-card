@@ -1,6 +1,6 @@
 name: MS Teams Deploy Card
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -15,4 +15,5 @@ jobs:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
-          deploy-title: Github Actions CI
+          layout: complete
+          include-files: true
