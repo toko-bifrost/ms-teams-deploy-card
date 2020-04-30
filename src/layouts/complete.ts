@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { escapeMarkdownTokens, formatFilesToDisplay } from "../utils";
-import { CardSection, Fact } from "../models";
+import { CardSection, Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
 
 export function formatCompleteLayout(
@@ -12,7 +12,18 @@ export function formatCompleteLayout(
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
   const webhookBody = formatCozyLayout(commit, timezone);
-  webhookBody.sections[0].facts = [
+  const section = webhookBody.sections[0];
+
+  // for complete layout, just replace activityText with potentialAction
+  section.activityText = undefined;
+  section.potentialAction = [
+    new PotentialAction("View build/deploy status", [
+      `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+    ]),
+    new PotentialAction("Review commit diffs", [commit.data.html_url]),
+  ];
+
+  section.facts = [
     new Fact(
       "Event type:",
       "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
@@ -30,7 +41,7 @@ export function formatCompleteLayout(
       allowedFileLenParsed,
       commit.data.html_url
     );
-    webhookBody.sections[0].facts?.push({
+    section.facts?.push({
       name: "Files changed:",
       value: filesToDisplay,
     });

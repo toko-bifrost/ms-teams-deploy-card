@@ -21,11 +21,12 @@ export class Fact {
 }
 
 export class CardSection {
-  potentialAction: PotentialAction[] = [];
   activityTitle: string = "";
   activitySubtitle: string = "";
   activityImage: string = "";
+  activityText?: string;
   facts?: Fact[];
+  potentialAction?: PotentialAction[];
 }
 
 export class WebhookBody {

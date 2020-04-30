@@ -7,6 +7,9 @@ import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
 import { getRunInformation } from "./utils";
 
+export const OCTOCAT_LOGO_URL =
+  "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
+
 const run = async () => {
   const githubToken = getInput("github-token", { required: true });
   const webhookUri = getInput("webhook-uri", { required: true });
