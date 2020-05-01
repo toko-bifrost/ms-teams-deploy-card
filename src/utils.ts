@@ -1,4 +1,7 @@
 import { Octokit } from "@octokit/rest";
+import { setOutput, info, getInput } from "@actions/core";
+import { WebhookBody } from "./models";
+import { Response } from "node-fetch";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -49,4 +52,35 @@ export function formatFilesToDisplay(
   }
 
   return filesToDisplay;
+}
+
+export async function getOctokitCommit() {
+  const runInfo = getRunInformation();
+  info("Workflow run information: " + JSON.stringify(runInfo, undefined, 2));
+
+  const githubToken = getInput("github-token", { required: true });
+  const octokit = new Octokit({ auth: `token ${githubToken}` });
+  return await octokit.repos.getCommit({
+    owner: runInfo.owner,
+    repo: runInfo.repo,
+    ref: runInfo.ref || "",
+  });
+}
+
+export function submitNotification(webhookBody: WebhookBody) {
+  const webhookUri = getInput("webhook-uri", { required: true });
+  const webhookBodyJson = JSON.stringify(webhookBody, undefined, 2);
+  return fetch(webhookUri, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: webhookBodyJson,
+  })
+    .then((response: globalThis.Response) => {
+      setOutput("webhook-body", webhookBodyJson);
+      info(webhookBodyJson);
+      return response;
+    })
+    .catch(console.error);
 }

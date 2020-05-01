@@ -1,7 +1,11 @@
-import { setFailed, info } from "@actions/core";
+import { setFailed } from "@actions/core";
+import { getOctokitCommit, submitNotification } from "./utils";
+import { formatCompactLayout } from "./layouts/compact";
 
-function run() {
-  info("This runs ins post.");
+async function run() {
+  const commit = await getOctokitCommit();
+  const webhookBody = formatCompactLayout(commit, "COMPLETED");
+  submitNotification(webhookBody);
 }
 
 try {

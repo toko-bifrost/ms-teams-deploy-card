@@ -1,17 +1,15 @@
 import { Octokit } from "@octokit/rest";
 import { escapeMarkdownTokens, formatFilesToDisplay } from "../utils";
-import { CardSection, Fact, PotentialAction } from "../models";
+import { Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
+import { getInput } from "@actions/core";
 
 export function formatCompleteLayout(
-  commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  timezone: string,
-  includeFiles: boolean,
-  allowedFileLenParsed: number
+  commit: Octokit.Response<Octokit.ReposGetCommitResponse>
 ) {
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
-  const webhookBody = formatCozyLayout(commit, timezone);
+  const webhookBody = formatCozyLayout(commit);
   const section = webhookBody.sections[0];
 
   // for complete layout, just replace activityText with potentialAction
@@ -35,7 +33,13 @@ export function formatCompleteLayout(
     new Fact("Repository & branch:", `[${branchUrl}](${branchUrl})`),
   ];
 
+  const includeFiles =
+    getInput("include-files").trim().toLowerCase() === "true";
   if (includeFiles) {
+    const allowedFileLen = getInput("allowed-file-len").toLowerCase();
+    const allowedFileLenParsed = parseInt(
+      allowedFileLen === "" ? "7" : allowedFileLen
+    );
     const filesToDisplay = formatFilesToDisplay(
       commit.data.files,
       allowedFileLenParsed,
