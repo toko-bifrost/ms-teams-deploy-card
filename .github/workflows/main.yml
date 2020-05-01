@@ -9,10 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ./
+      - name: Notify dedicated teams channel
+        uses: ./
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
           layout: cozy
           include-files: false
+
+      - name: Try exitting this process abnormally
+        run: exit 1

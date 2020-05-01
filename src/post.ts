@@ -1,10 +1,12 @@
-import { setFailed } from "@actions/core";
+import { setFailed, ExitCode } from "@actions/core";
 import { getOctokitCommit, submitNotification } from "./utils";
 import { formatCompactLayout } from "./layouts/compact";
 
 async function run() {
   const commit = await getOctokitCommit();
-  const webhookBody = formatCompactLayout(commit, "COMPLETED");
+  const exitCode =
+    process.exitCode === ExitCode.Success ? "SUCCESS" : "FAILURE";
+  const webhookBody = formatCompactLayout(commit, exitCode);
   submitNotification(webhookBody);
 }
 
