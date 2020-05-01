@@ -17,6 +17,3 @@ jobs:
           timezone: Australia/Sydney
           layout: cozy
           include-files: false
-
-      - name: Try exitting this process abnormally
-        run: exit 1
