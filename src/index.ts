@@ -10,7 +10,7 @@ import { getRunInformation } from "./utils";
 export const OCTOCAT_LOGO_URL =
   "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
 
-const run = async () => {
+async function run() {
   const githubToken = getInput("github-token", { required: true });
   const webhookUri = getInput("webhook-uri", { required: true });
   const timezone = getInput("timezone") || "UTC";
@@ -60,7 +60,7 @@ const run = async () => {
       info(webhookBodyJson);
     })
     .catch(console.error);
-};
+}
 
 try {
   run();

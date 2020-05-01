@@ -18,7 +18,7 @@ A comprehensive notification card in Microsoft Teams for your deployments.
 
 ![](screenshots/layout-cozy.png)
 
-### Compact
+#### Compact
 
 ![](screenshots/layout-compact.png)
 
