@@ -40,8 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # this is the new step
-      - name: Notify dedicated teams channel
-        uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+      - uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -53,10 +52,10 @@ jobs:
      - `${{ secrets.GITHUB_TOKEN }}`
      - a manually added secret with more Github API permissions, e.g. `${{ secrets.<custom secret here> }}`
    - `webhook-uri` - (required), the value of `MS_TEAMS_WEBHOOK_URI`
-   - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display
    - `timezone` - (optional, defaults to `UTC`), a [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. "Australia/Sydney"
    - `layout` - (optional, defaults to `complete`), layout template (choices are `complete`, `cozy`, `compact`)
    - `include-files` - (optional, defaults to `true`), include the list of files when `layout` is set to `complete`
+   - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display, when `include-files` is set to `true`
 
 ### Local Set-up
 

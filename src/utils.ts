@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { setOutput, info, getInput } from "@actions/core";
 import { WebhookBody } from "./models";
-import { Response } from "node-fetch";
+import fetch, { Response } from "node-fetch";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -77,7 +77,7 @@ export function submitNotification(webhookBody: WebhookBody) {
     },
     body: webhookBodyJson,
   })
-    .then((response: globalThis.Response) => {
+    .then((response: Response) => {
       setOutput("webhook-body", webhookBodyJson);
       info(webhookBodyJson);
       return response;

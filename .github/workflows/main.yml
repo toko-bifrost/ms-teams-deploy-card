@@ -9,8 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Notify dedicated teams channel
-        uses: ./
+      - uses: ./
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
