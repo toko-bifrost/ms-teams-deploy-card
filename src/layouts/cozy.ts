@@ -8,7 +8,7 @@ export const OCTOCAT_LOGO_URL =
 
 export function formatCozyLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status = "STARTED",
+  status: string,
   elapsedSeconds?: number
 ) {
   const timezone = getInput("timezone") || "UTC";

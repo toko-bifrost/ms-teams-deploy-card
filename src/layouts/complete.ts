@@ -6,7 +6,7 @@ import { getInput } from "@actions/core";
 
 export function formatCompleteLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status = "STARTED",
+  status: string,
   elapsedSeconds?: number
 ) {
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;

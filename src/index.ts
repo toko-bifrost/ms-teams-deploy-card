@@ -3,7 +3,7 @@ import { formatAndNotify } from "./utils";
 
 try {
   formatAndNotify("start");
-  saveState("startTime", new Date());
+  saveState("startTime", new Date().toUTCString());
   console.log(getState("startTime"));
 } catch (error) {
   setFailed(error.message);
