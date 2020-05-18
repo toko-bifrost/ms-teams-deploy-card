@@ -1,4 +1,4 @@
-export const CONCLUSION_THEMES = {
+export const CONCLUSION_THEMES: any = {
   neutral: "5DB1D1",
   success: "90C978",
   cancelled: "D99294",
