@@ -8,11 +8,7 @@ A comprehensive notification card in Microsoft Teams for your deployments.
 
 #### Complete
 
-![](screenshots/layout-complete-with-files.png)
-
-#### Complete (without files)
-
-![](screenshots/layout-complete-without-files.png)
+![](screenshots/layout-complete.png)
 
 #### Cozy
 
