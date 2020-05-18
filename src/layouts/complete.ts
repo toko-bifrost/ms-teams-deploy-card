@@ -5,11 +5,13 @@ import { formatCozyLayout } from "./cozy";
 import { getInput } from "@actions/core";
 
 export function formatCompleteLayout(
-  commit: Octokit.Response<Octokit.ReposGetCommitResponse>
+  commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
+  status = "STARTED",
+  elapsedSeconds?: number
 ) {
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
-  const webhookBody = formatCozyLayout(commit);
+  const webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
   const section = webhookBody.sections[0];
 
   // for complete layout, just replace activityText with potentialAction
@@ -21,17 +23,31 @@ export function formatCompleteLayout(
     new PotentialAction("Review commit diffs", [commit.data.html_url]),
   ];
 
+  if (elapsedSeconds) {
+    status += `[${elapsedSeconds} seconds]`;
+  }
+
   section.facts = [
     new Fact(
       "Event type:",
       "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
     ),
+    new Fact("Status:", "`" + status + "`"),
     new Fact(
       "Commit message:",
       escapeMarkdownTokens(commit.data.commit.message)
     ),
     new Fact("Repository & branch:", `[${branchUrl}](${branchUrl})`),
   ];
+
+  const environment = getInput("environment");
+  if (typeof environment === "string") {
+    section.facts.splice(
+      1,
+      0,
+      new Fact("Environment:", `\`${environment.toUpperCase()}\``)
+    );
+  }
 
   const includeFiles =
     getInput("include-files").trim().toLowerCase() === "true";

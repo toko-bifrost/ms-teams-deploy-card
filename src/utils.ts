@@ -1,7 +1,12 @@
 import { Octokit } from "@octokit/rest";
-import { setOutput, info, getInput } from "@actions/core";
-import { WebhookBody } from "./models";
+import { setOutput, info, getInput, getState } from "@actions/core";
 import fetch, { Response } from "node-fetch";
+import moment from "moment";
+
+import { WebhookBody } from "./models";
+import { formatCompactLayout } from "./layouts/compact";
+import { formatCozyLayout } from "./layouts/cozy";
+import { formatCompleteLayout } from "./layouts/complete";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -83,4 +88,35 @@ export function submitNotification(webhookBody: WebhookBody) {
       return response;
     })
     .catch(console.error);
+}
+
+export async function formatAndNotify(state: "start" | "exit") {
+  const showCard = getInput(`show-on-${state}`).trim() == "true";
+
+  if (showCard) {
+    let webhookBody: WebhookBody;
+    const commit = await getOctokitCommit();
+    const cardLayoutStart = getInput(`card-layout-${state}`);
+
+    const startTime = moment(getState("startTime"));
+    let status, elapsedSeconds;
+
+    if (state === "exit") {
+      status = "COMPLETED";
+      elapsedSeconds = moment().diff(startTime, "seconds");
+    }
+
+    if (cardLayoutStart === "compact") {
+      webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
+    } else if (cardLayoutStart === "cozy") {
+      webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
+    } else {
+      // for complete layout
+      webhookBody = formatCompleteLayout(commit, status, elapsedSeconds);
+    }
+
+    submitNotification(webhookBody);
+  } else {
+    info(`Configured to not show card upon job ${state}.`);
+  }
 }

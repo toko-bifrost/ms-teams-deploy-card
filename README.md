@@ -46,16 +46,20 @@ jobs:
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
 ```
 
-3. Tweak the following configurations
-   - `github-token` - (required), this can be set to the following:
-     - `${{ github.token }}`
-     - `${{ secrets.GITHUB_TOKEN }}`
-     - a manually added secret with more Github API permissions, e.g. `${{ secrets.<custom secret here> }}`
-   - `webhook-uri` - (required), the value of `MS_TEAMS_WEBHOOK_URI`
-   - `timezone` - (optional, defaults to `UTC`), a [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. "Australia/Sydney"
-   - `layout` - (optional, defaults to `complete`), layout template (choices are `complete`, `cozy`, `compact`)
-   - `include-files` - (optional, defaults to `true`), include the list of files when `layout` is set to `complete`
-   - `allowed-file-len` - (optional, defaults to `7`), allowed number of changed files to display, when `include-files` is set to `true`
+### Configurations
+
+| Name                | Required | Default    | Description                                                                                                                           |
+| ------------------- | -------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `github-token`      | `true`   | None       | This can be set to the following:<br/>- `${{ github.token }}`<br/>- `${{ secrets.GITHUB_TOKEN }}`<br/>- `${{ secrets.CUSTOM_TOKEN }}` |
+| `webhook-uri`       | `true`   | None       | The value of `MS_TEAMS_WEBHOOK_URI`                                                                                                   |
+| `environment`       | `false`  | None       | Name of the environment, e.g. `development`, `production` (won't be included in the card if none)                                     |
+| `timezone`          | `false`  | `UTC`      | A [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. `Australia/Sydney`               |
+| `card-layout-start` | `false`  | `complete` | Card layout on **_start_** (i.e. `complete`, `cozy`, `compact`)                                                                       |
+| `card-layout-exit`  | `false`  | `compact`  | Card layout on **_exit_** (i.e. `complete`, `cozy`, `compact`)                                                                        |
+| `show-on-start`     | `false`  | `true`     | Show an MS Teams card upon **_starting_** this Github Actions job                                                                     |
+| `show-on-exit`      | `false`  | `true`     | Show an MS Teams card upon **_exiting_** this Github Actions job                                                                      |
+| `include-files`     | `false`  | `true`     | Include the list of files when `layout` is set to `complete`                                                                          |
+| `allowed-file-len`  | `false`  | `7`        | Allowed number of changed files to display, when `include-files` is set to `true`                                                     |
 
 ### Local Set-up
 
