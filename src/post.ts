@@ -6,12 +6,12 @@ async function getWorkflowRunStatus() {
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
-  const workflowJob = await octokit.actions.getWorkflowRun({
+  const workflowJobs = await octokit.actions.listJobsForWorkflowRun({
     owner: runInfo.owner,
     repo: runInfo.repo,
     run_id: parseInt(runInfo.runId || "1"),
   });
-  console.log(workflowJob);
+  console.log(workflowJobs);
 }
 
 try {
