@@ -11,13 +11,12 @@ async function getWorkflowRunStatus() {
     repo: runInfo.repo,
     run_id: parseInt(runInfo.runId || "1"),
   });
-  console.log(workflowJobs);
+  console.log(workflowJobs.data.jobs);
 }
 
 try {
   getWorkflowRunStatus();
   formatAndNotify("exit");
-  console.log(process.env);
 } catch (error) {
   setFailed(error.message);
 }

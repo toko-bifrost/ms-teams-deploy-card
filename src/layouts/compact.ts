@@ -19,7 +19,7 @@ export function formatCompactLayout(
   }
   const environment = getInput("environment");
   if (environment) {
-    labels += ` \`[${environment.toUpperCase()}]\``;
+    labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
   webhookBody.text =
