@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { WebhookBody } from "../models";
+import { getInput } from "@actions/core";
 
 export function formatCompactLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
@@ -12,14 +13,17 @@ export function formatCompactLayout(
   const runLink = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
   const webhookBody = new WebhookBody();
 
-  console.log(elapsedSeconds);
+  let labels = `\`${status}\``;
   if (elapsedSeconds) {
-    status += ` [${elapsedSeconds}]`;
-    console.log(status);
+    labels = `\`${status} [${elapsedSeconds}s]\``;
+  }
+  const environment = getInput("environment");
+  if (environment) {
+    labels += ` \`${environment.toUpperCase()}\``;
   }
 
   webhookBody.text =
-    `\`${status}\` &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
+    `${labels} &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
     `(commit [${shortSha}](${commit.data.html_url})) on [${process.env.GITHUB_REPOSITORY}](${repoUrl}) ` +
     `by [@${author.login}](${author.html_url})`;
   return webhookBody;

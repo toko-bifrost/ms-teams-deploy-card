@@ -20,8 +20,13 @@ export function formatCozyLayout(
   const shortSha = process.env.GITHUB_SHA?.substr(0, 7);
   const statusUrl = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
+  let labels = `\`${status}\``;
   if (elapsedSeconds) {
-    status += ` [${elapsedSeconds}s]`;
+    labels = `\`${status} [${elapsedSeconds}s]\``;
+  }
+  const environment = getInput("environment");
+  if (environment) {
+    labels += ` \`${environment.toUpperCase()}\``;
   }
 
   webhookBody.sections = [
@@ -29,7 +34,7 @@ export function formatCozyLayout(
       activityTitle: `**CI #${process.env.GITHUB_RUN_NUMBER} (commit ${shortSha})** on [${process.env.GITHUB_REPOSITORY}](${repoUrl})`,
       activityImage: commit.data.author.avatar_url || OCTOCAT_LOGO_URL,
       activitySubtitle: `by [@${commit.data.author.login}](${commit.data.author.html_url}) on ${nowFmt}`,
-      activityText: `\`${status}\`\ &nbsp; &nbsp; [View status](${statusUrl}) &nbsp; &nbsp; [Review diffs](${commit.data.html_url})`,
+      activityText: `${labels} &nbsp; &nbsp; [View status](${statusUrl}) &nbsp; &nbsp; [Review diffs](${commit.data.html_url})`,
     },
   ];
   return webhookBody;
