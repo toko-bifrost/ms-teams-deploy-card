@@ -16,12 +16,3 @@ jobs:
           environment: Development
           timezone: Australia/Sydney
           card-layout-start: cozy
-          card-layout-exit: complete
-          include-files: true
-
-      - run: echo Success
-      - run: echo Success
-      - run: echo Success
-      - run: echo Success
-      - run: echo Success
-      - run: exit 1
