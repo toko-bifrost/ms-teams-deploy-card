@@ -118,7 +118,7 @@ export async function getWorkflowRunStatus() {
   const startTime = moment(job?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
-    elapsedSeconds: startTime.diff(endTime, "seconds"),
+    elapsedSeconds: endTime.diff(startTime, "seconds"),
     status: lastStep?.conclusion || "COMPLETED",
   };
 }

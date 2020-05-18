@@ -24,7 +24,7 @@ export function formatCozyLayout(
   // Set status and elapsedSeconds
   let labels = `\`${status.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${status} [${elapsedSeconds}s]\``;
+    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
   // Set environment name
