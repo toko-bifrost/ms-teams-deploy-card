@@ -18,4 +18,9 @@ jobs:
           card-layout-start: cozy
           include-files: true
 
+      - run: echo Success
+      - run: echo Success
+      - run: echo Success
+      - run: echo Success
+      - run: echo Success
       - run: exit 1

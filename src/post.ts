@@ -11,7 +11,7 @@ async function getWorkflowRunStatus() {
     repo: runInfo.repo,
     run_id: parseInt(runInfo.runId || "1"),
   });
-  console.log(workflowJobs.data.jobs);
+  console.log(workflowJobs.data.jobs[0].steps);
 }
 
 try {
