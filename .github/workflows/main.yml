@@ -17,3 +17,5 @@ jobs:
           timezone: Australia/Sydney
           card-layout-start: cozy
           include-files: true
+
+      - run: exit 1
