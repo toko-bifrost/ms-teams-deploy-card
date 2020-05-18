@@ -3,7 +3,7 @@ import { WebhookBody } from "../models";
 
 export function formatCompactLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status = "STARTED",
+  status: string,
   elapsedSeconds?: number
 ) {
   const author = commit.data.author;
@@ -12,8 +12,10 @@ export function formatCompactLayout(
   const runLink = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
   const webhookBody = new WebhookBody();
 
+  console.log(elapsedSeconds);
   if (elapsedSeconds) {
     status += ` [${elapsedSeconds}]`;
+    console.log(status);
   }
 
   webhookBody.text =

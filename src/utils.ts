@@ -99,12 +99,9 @@ export async function formatAndNotify(state: "start" | "exit") {
     const cardLayoutStart = getInput(`card-layout-${state}`);
 
     const startTime = moment(getState("startTime"), moment.ISO_8601);
-    let status, elapsedSeconds;
-
-    if (state === "exit") {
-      status = "COMPLETED";
-      elapsedSeconds = moment().diff(startTime, "seconds");
-    }
+    let status = state === "exit" ? "STARTED" : "COMPLETED";
+    let elapsedSeconds =
+      state === "exit" ? moment().diff(startTime, "seconds") : undefined;
 
     if (cardLayoutStart === "compact") {
       webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
