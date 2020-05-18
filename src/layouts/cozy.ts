@@ -26,7 +26,7 @@ export function formatCozyLayout(
   }
   const environment = getInput("environment");
   if (environment) {
-    labels += ` \`ENV: ${environment.toUpperCase()}\``;
+    labels += ` \`[${environment.toUpperCase()}]\``;
   }
 
   webhookBody.sections = [

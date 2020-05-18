@@ -24,10 +24,10 @@ export function getRunInformation() {
   return {
     owner,
     repo,
-    ref: process.env.GITHUB_SHA,
+    ref: process.env.GITHUB_SHA || undefined,
     branchUrl: `https://github.com/${process.env.GITHUB_REPOSITORY}/tree/${process.env.GITHUB_REF}`,
-    runId: process.env.GITHUB_RUN_ID,
-    runNum: process.env.GITHUB_RUN_NUMBER,
+    runId: process.env.GITHUB_RUN_ID || undefined,
+    runNum: process.env.GITHUB_RUN_NUMBER || undefined,
   };
 }
 
