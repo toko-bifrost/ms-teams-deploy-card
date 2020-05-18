@@ -15,8 +15,10 @@ async function getWorkflowRunStatus() {
 }
 
 try {
-  getWorkflowRunStatus();
-  formatAndNotify("exit");
+  setTimeout(() => {
+    getWorkflowRunStatus();
+    formatAndNotify("exit");
+  }, 3000);
 } catch (error) {
   setFailed(error.message);
 }
