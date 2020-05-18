@@ -51,16 +51,19 @@ export function formatCompleteLayout(
     new PotentialAction("Review commit diffs", [commit.data.html_url]),
   ];
 
+  // Set status and elapsedSeconds
+  let labels = `\`${status.toUpperCase()}\``;
   if (elapsedSeconds) {
-    status += ` [${elapsedSeconds}]`;
+    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
+  // Set section facts
   section.facts = [
     new Fact(
       "Event type:",
       "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
     ),
-    new Fact("Status:", "`" + status + "`"),
+    new Fact("Status:", labels),
     new Fact(
       "Commit message:",
       escapeMarkdownTokens(commit.data.commit.message)
@@ -68,6 +71,7 @@ export function formatCompleteLayout(
     new Fact("Repository & branch:", `[${branchUrl}](${branchUrl})`),
   ];
 
+  // Set environment name
   const environment = getInput("environment");
   if (typeof environment === "string") {
     section.facts.splice(
@@ -77,6 +81,7 @@ export function formatCompleteLayout(
     );
   }
 
+  // Set list of files
   const includeFiles =
     getInput("include-files").trim().toLowerCase() === "true";
   if (includeFiles) {
