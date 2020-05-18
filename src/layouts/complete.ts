@@ -1,8 +1,36 @@
 import { Octokit } from "@octokit/rest";
-import { escapeMarkdownTokens, formatFilesToDisplay } from "../utils";
+import { escapeMarkdownTokens } from "../utils";
 import { Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
 import { getInput } from "@actions/core";
+
+export function formatFilesToDisplay(
+  files: Octokit.ReposGetCommitResponseFilesItem[],
+  allowedLength: number,
+  htmlUrl: string
+) {
+  const filesChanged = files
+    .slice(0, allowedLength)
+    .map(
+      (file: any) =>
+        `[${escapeMarkdownTokens(file.filename)}](${file.blob_url}) (${
+          file.changes
+        } changes)`
+    );
+
+  let filesToDisplay = "";
+  if (files.length === 0) {
+    filesToDisplay = "*No files changed.*";
+  } else {
+    filesToDisplay = "* " + filesChanged.join("\n\n* ");
+    if (files.length > 7) {
+      const moreLen = files.length - 7;
+      filesToDisplay += `\n\n* and [${moreLen} more files](${htmlUrl}) changed`;
+    }
+  }
+
+  return filesToDisplay;
+}
 
 export function formatCompleteLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,

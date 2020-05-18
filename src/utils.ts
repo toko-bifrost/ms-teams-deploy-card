@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { setOutput, info, getInput, getState } from "@actions/core";
+import { setOutput, info, getInput } from "@actions/core";
 import fetch, { Response } from "node-fetch";
 import moment from "moment";
 
@@ -7,6 +7,7 @@ import { WebhookBody } from "./models";
 import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
+import { CONCLUSION_THEMES } from "./constants";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -29,34 +30,6 @@ export function getRunInformation() {
     runId: process.env.GITHUB_RUN_ID || undefined,
     runNum: process.env.GITHUB_RUN_NUMBER || undefined,
   };
-}
-
-export function formatFilesToDisplay(
-  files: Octokit.ReposGetCommitResponseFilesItem[],
-  allowedLength: number,
-  htmlUrl: string
-) {
-  const filesChanged = files
-    .slice(0, allowedLength)
-    .map(
-      (file: any) =>
-        `[${escapeMarkdownTokens(file.filename)}](${file.blob_url}) (${
-          file.changes
-        } changes)`
-    );
-
-  let filesToDisplay = "";
-  if (files.length === 0) {
-    filesToDisplay = "*No files changed.*";
-  } else {
-    filesToDisplay = "* " + filesChanged.join("\n\n* ");
-    if (files.length > 7) {
-      const moreLen = files.length - 7;
-      filesToDisplay += `\n\n* and [${moreLen} more files](${htmlUrl}) changed`;
-    }
-  }
-
-  return filesToDisplay;
 }
 
 export async function getOctokitCommit() {
@@ -98,10 +71,14 @@ export async function formatAndNotify(state: "start" | "exit") {
     const commit = await getOctokitCommit();
     const cardLayoutStart = getInput(`card-layout-${state}`);
 
-    const startTime = moment(getState("startTime"), moment.ISO_8601);
-    let status = state === "exit" ? "COMPLETED" : "STARTED";
-    let elapsedSeconds =
-      state === "exit" ? moment().diff(startTime, "seconds") : undefined;
+    let status = "IN_PROGRESS";
+    let elapsedSeconds;
+
+    if (state === "exit") {
+      const workflowRunStatus = await getWorkflowRunStatus();
+      status = workflowRunStatus.status;
+      elapsedSeconds = workflowRunStatus.elapsedSeconds;
+    }
 
     if (cardLayoutStart === "compact") {
       webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
@@ -116,4 +93,32 @@ export async function formatAndNotify(state: "start" | "exit") {
   } else {
     info(`Configured to not show card upon job ${state}.`);
   }
+}
+
+export async function getWorkflowRunStatus() {
+  const runInfo = getRunInformation();
+  const githubToken = getInput("github-token", { required: true });
+  const octokit = new Octokit({ auth: `token ${githubToken}` });
+  const workflowJobs = await octokit.actions.listJobsForWorkflowRun({
+    owner: runInfo.owner,
+    repo: runInfo.repo,
+    run_id: parseInt(runInfo.runId || "1"),
+  });
+  const job = workflowJobs.data.jobs.find(
+    (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
+      job.name === process.env.GITHUB_JOB
+  );
+  const conclusionKeys = Object.keys(CONCLUSION_THEMES);
+  const lastStep = job?.steps
+    .reverse()
+    .find(
+      (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
+        conclusionKeys.includes(step.conclusion)
+    );
+  const startTime = moment(job?.started_at, moment.ISO_8601);
+  const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
+  return {
+    elapsedSeconds: startTime.diff(endTime, "seconds"),
+    status: lastStep?.conclusion || "COMPLETED",
+  };
 }
