@@ -98,7 +98,7 @@ export async function formatAndNotify(state: "start" | "exit") {
     const commit = await getOctokitCommit();
     const cardLayoutStart = getInput(`card-layout-${state}`);
 
-    const startTime = moment(getState("startTime"));
+    const startTime = moment(getState("startTime"), moment.ISO_8601);
     let status, elapsedSeconds;
 
     if (state === "exit") {

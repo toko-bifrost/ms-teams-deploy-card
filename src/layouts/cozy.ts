@@ -21,7 +21,7 @@ export function formatCozyLayout(
   const statusUrl = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
   if (elapsedSeconds) {
-    status += `[${elapsedSeconds} seconds]`;
+    status += ` [${elapsedSeconds}s]`;
   }
 
   webhookBody.sections = [

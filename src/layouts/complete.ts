@@ -24,7 +24,7 @@ export function formatCompleteLayout(
   ];
 
   if (elapsedSeconds) {
-    status += `[${elapsedSeconds} seconds]`;
+    status += ` [${elapsedSeconds}]`;
   }
 
   section.facts = [

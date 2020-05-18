@@ -13,7 +13,7 @@ export function formatCompactLayout(
   const webhookBody = new WebhookBody();
 
   if (elapsedSeconds) {
-    status += `[${elapsedSeconds} seconds]`;
+    status += ` [${elapsedSeconds}]`;
   }
 
   webhookBody.text =
