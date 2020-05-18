@@ -12,19 +12,40 @@ inputs:
   github-token:
     description: Github token
     required: true
-  deploy-title:
-    description: Deployment title
+  environment:
+    description: Name of the environment (won't be included in the card if none)
     required: false
-    default: Github Actions CI
+    default: null
+  timezone:
+    description: Timezone for notification
+    required: false
+    default: UTC
+  card-layout-start:
+    description: Card layout on start (i.e. "complete", "cozy", "compact")
+    required: false
+    default: complete
+  card-layout-exit:
+    description: Card layout on end (i.e. "complete", "cozy", "compact")
+    required: false
+    default: compact
+  show-on-start:
+    description: Show the MS Teams card upon starting this Github Actions job
+    required: false
+    default: true
+  show-on-exit:
+    description: Show the MS Teams card upon exiting this Github Actions job
+    required: false
+    default: true
+  include-files:
+    description: Only for complete layout; Set false to exclude list of files
+    required: false
+    default: true
   allowed-file-len:
     description: Allowed number of files to display
     required: false
     default: 7
-  timezone:
-    description: Timezone for notification timezone
-    required: false
-    default: UTC
 
 runs:
   using: node12
-  main: dist/index.js
+  main: dist/main/index.js
+  post: dist/post/index.js

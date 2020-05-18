@@ -1,6 +1,6 @@
 name: MS Teams Deploy Card
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -9,10 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Notify dedicated teams channel
-        uses: ./
+      - uses: ./
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          environment: Development
           timezone: Australia/Sydney
-          deploy-title: Github Actions CI
+          card-layout-start: cozy
