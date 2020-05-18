@@ -99,7 +99,7 @@ export async function formatAndNotify(state: "start" | "exit") {
     const cardLayoutStart = getInput(`card-layout-${state}`);
 
     const startTime = moment(getState("startTime"), moment.ISO_8601);
-    let status = state === "exit" ? "STARTED" : "COMPLETED";
+    let status = state === "exit" ? "COMPLETED" : "STARTED";
     let elapsedSeconds =
       state === "exit" ? moment().diff(startTime, "seconds") : undefined;
 

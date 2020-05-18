@@ -13,6 +13,7 @@ jobs:
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          environment: Development
           timezone: Australia/Sydney
           card-layout-start: cozy
           include-files: true
