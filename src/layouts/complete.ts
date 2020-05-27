@@ -73,7 +73,7 @@ export function formatCompleteLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (typeof environment === "string") {
+  if (environment.trim() !== "") {
     section.facts.splice(
       1,
       0,
