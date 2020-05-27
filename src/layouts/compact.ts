@@ -22,7 +22,7 @@ export function formatCompactLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment) {
+  if (environment.trim() !== "") {
     labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
