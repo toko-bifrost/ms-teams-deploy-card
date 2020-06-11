@@ -29,19 +29,22 @@ export function formatCozyLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment) {
+  if (environment.trim() !== "") {
     labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
   // Set themeColor
   webhookBody.themeColor = CONCLUSION_THEMES[status] || "957DAD";
 
+  const author = commit.data.author;
   // Set sections
   webhookBody.sections = [
     {
       activityTitle: `**CI #${process.env.GITHUB_RUN_NUMBER} (commit ${shortSha})** on [${process.env.GITHUB_REPOSITORY}](${repoUrl})`,
-      activityImage: commit.data.author.avatar_url || OCTOCAT_LOGO_URL,
-      activitySubtitle: `by [@${commit.data.author.login}](${commit.data.author.html_url}) on ${nowFmt}`,
+      activityImage: author?.avatar_url || OCTOCAT_LOGO_URL,
+      activitySubtitle: author
+        ? `by [@${author.login}](${author.html_url}) on ${nowFmt}`
+        : nowFmt,
       activityText: `${labels} &nbsp; &nbsp; [View status](${statusUrl}) &nbsp; &nbsp; [Review diffs](${commit.data.html_url})`,
     },
   ];
