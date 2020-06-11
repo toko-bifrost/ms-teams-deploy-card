@@ -22,7 +22,7 @@ export class Fact {
 
 export class CardSection {
   activityTitle: string = "";
-  activitySubtitle: string = "";
+  activitySubtitle?: string = "";
   activityImage: string = "";
   activityText?: string;
   facts?: Fact[];
