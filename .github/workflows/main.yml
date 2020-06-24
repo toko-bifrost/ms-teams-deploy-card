@@ -14,11 +14,5 @@ jobs:
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          environment: Development
           timezone: Australia/Sydney
-          card-layout-start: complete
-          custom-facts: |
-            - name: Custom Fact 1
-              value: Random URL maybe
-            - name: Pull Request
-              value: http://example.com/${{ github.run_id }}
+          card-layout-start: cozy
