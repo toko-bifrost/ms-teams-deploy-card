@@ -10,7 +10,7 @@ try {
 
     const workflowRunStatus = await getWorkflowRunStatus();
     if (
-      showCardOnExit ||
+      (showCardOnExit && !showCardOnFailure) ||
       (showCardOnFailure && workflowRunStatus.conclusion !== "success")
     ) {
       formatAndNotify(
