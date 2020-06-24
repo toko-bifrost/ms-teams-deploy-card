@@ -17,8 +17,3 @@ jobs:
           environment: Development
           timezone: Australia/Sydney
           card-layout-start: cozy
-          show-on-failure: true
-
-      - run: exit 1
-
-      - run: exit 0
