@@ -36,6 +36,10 @@ inputs:
     description: Show the MS Teams card upon exiting this Github Actions job
     required: false
     default: true
+  show-on-failure:
+    description: Show the MS Teams card upon failure only of this Github Actions job
+    required: false
+    default: false
   include-files:
     description: Only for complete layout; Set false to exclude list of files
     required: false
