@@ -11,11 +11,11 @@ try {
     const workflowRunStatus = await getWorkflowRunStatus();
     if (
       showCardOnExit ||
-      (showCardOnFailure && workflowRunStatus.status !== "COMPLETED")
+      (showCardOnFailure && workflowRunStatus.conclusion !== "success")
     ) {
       formatAndNotify(
         "exit",
-        workflowRunStatus.status,
+        workflowRunStatus.conclusion,
         workflowRunStatus.elapsedSeconds
       );
     } else {

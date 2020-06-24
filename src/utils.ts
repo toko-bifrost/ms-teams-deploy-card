@@ -65,7 +65,7 @@ export function submitNotification(webhookBody: WebhookBody) {
 
 export async function formatAndNotify(
   state: "start" | "exit",
-  status = "IN_PROGRESS",
+  conclusion = "IN_PROGRESS",
   elapsedSeconds?: number
 ) {
   let webhookBody: WebhookBody;
@@ -73,12 +73,11 @@ export async function formatAndNotify(
   const cardLayoutStart = getInput(`card-layout-${state}`);
 
   if (cardLayoutStart === "compact") {
-    webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
+    webhookBody = formatCompactLayout(commit, conclusion, elapsedSeconds);
   } else if (cardLayoutStart === "cozy") {
-    webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
+    webhookBody = formatCozyLayout(commit, conclusion, elapsedSeconds);
   } else {
-    // for complete layout
-    webhookBody = formatCompleteLayout(commit, status, elapsedSeconds);
+    webhookBody = formatCompleteLayout(commit, conclusion, elapsedSeconds);
   }
 
   submitNotification(webhookBody);
@@ -97,17 +96,30 @@ export async function getWorkflowRunStatus() {
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
       job.name === process.env.GITHUB_JOB
   );
-  const conclusionKeys = Object.keys(CONCLUSION_THEMES);
-  const lastStep = job?.steps
-    .reverse()
-    .find(
-      (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
-        conclusionKeys.includes(step.conclusion)
-    );
+  let lastStep;
+  const stoppedStep = job?.steps.find(
+    (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
+      step.conclusion === "failure" ||
+      step.conclusion === "timed_out" ||
+      step.conclusion === "cancelled" ||
+      step.conclusion === "action_required"
+  );
+  if (stoppedStep) {
+    lastStep = stoppedStep;
+  } else {
+    lastStep = job?.steps
+      .reverse()
+      .find(
+        (
+          step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+        ) => step.status !== "completed"
+      );
+  }
+
   const startTime = moment(job?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    status: lastStep?.conclusion || "COMPLETED",
+    conclusion: lastStep?.conclusion,
   };
 }

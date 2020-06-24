@@ -34,12 +34,12 @@ export function formatFilesToDisplay(
 
 export function formatCompleteLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status: string,
+  conclusion: string,
   elapsedSeconds?: number
 ) {
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
-  const webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
+  const webhookBody = formatCozyLayout(commit, conclusion, elapsedSeconds);
   const section = webhookBody.sections[0];
 
   // for complete layout, just replace activityText with potentialAction
@@ -52,9 +52,9 @@ export function formatCompleteLayout(
   ];
 
   // Set status and elapsedSeconds
-  let labels = `\`${status.toUpperCase()}\``;
+  let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
   // Set section facts

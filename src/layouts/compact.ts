@@ -5,7 +5,7 @@ import { CONCLUSION_THEMES } from "../constants";
 
 export function formatCompactLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status: string,
+  conclusion: string,
   elapsedSeconds?: number
 ) {
   const author = commit.data.author;
@@ -15,9 +15,9 @@ export function formatCompactLayout(
   const webhookBody = new WebhookBody();
 
   // Set status and elapsedSeconds
-  let labels = `\`${status.toUpperCase()}\``;
+  let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
   // Set environment name
@@ -27,7 +27,7 @@ export function formatCompactLayout(
   }
 
   // Set themeColor
-  webhookBody.themeColor = CONCLUSION_THEMES[status] || "957DAD";
+  webhookBody.themeColor = CONCLUSION_THEMES[conclusion] || "957DAD";
 
   webhookBody.text =
     `${labels} &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
