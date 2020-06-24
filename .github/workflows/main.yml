@@ -9,10 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: exit 1
-
-      - run: exit 0
-
       - uses: ./
         if: always()
         with:
@@ -22,3 +18,7 @@ jobs:
           timezone: Australia/Sydney
           card-layout-start: cozy
           show-on-failure: true
+
+      - run: exit 1
+
+      - run: exit 0

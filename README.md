@@ -35,6 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - if: always()
       # this is the new step
       - uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
         with:
@@ -70,3 +71,18 @@ jobs:
 
 - Avoid naming your secrets with the prefix `GITHUB_` as secrets are being used as environment variables, and they are reserved for Github Actions' use only. Better stick with `CI_GITHUB_TOKEN`.
 - As this is still in development, always use the working latest version from the `Releases`, as they have more bug fixes and added features.
+- Always set this job with `if: always()` when there are steps between `actions/checkout@v2` and this job.
+- As much as possible, always set this Github action right after `actions/checkout@v2` and before any job steps. The following diagram shows when this job if going to trigger if done the right way.
+
+```
+  job
+    |-- actions/checkout@v2
+      |-- ms-teams-deploy-card (fires notification of job initiation, if allowed)
+        |-- step 1
+        |...more steps
+        |-- step N
+      |-- post ms-teams-deploy-card
+          * checks the conclusion based on the previous completed steps
+          * fires notification if allowed in the settings
+    |-- post actions/checkout@v2
+```
