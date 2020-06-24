@@ -63,36 +63,25 @@ export function submitNotification(webhookBody: WebhookBody) {
     .catch(console.error);
 }
 
-export async function formatAndNotify(state: "start" | "exit") {
-  const showCard = getInput(`show-on-${state}`).trim() == "true";
+export async function formatAndNotify(
+  state: "start" | "exit",
+  status = "IN_PROGRESS",
+  elapsedSeconds?: number
+) {
+  let webhookBody: WebhookBody;
+  const commit = await getOctokitCommit();
+  const cardLayoutStart = getInput(`card-layout-${state}`);
 
-  if (showCard) {
-    let webhookBody: WebhookBody;
-    const commit = await getOctokitCommit();
-    const cardLayoutStart = getInput(`card-layout-${state}`);
-
-    let status = "IN_PROGRESS";
-    let elapsedSeconds;
-
-    if (state === "exit") {
-      const workflowRunStatus = await getWorkflowRunStatus();
-      status = workflowRunStatus.status;
-      elapsedSeconds = workflowRunStatus.elapsedSeconds;
-    }
-
-    if (cardLayoutStart === "compact") {
-      webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
-    } else if (cardLayoutStart === "cozy") {
-      webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
-    } else {
-      // for complete layout
-      webhookBody = formatCompleteLayout(commit, status, elapsedSeconds);
-    }
-
-    submitNotification(webhookBody);
+  if (cardLayoutStart === "compact") {
+    webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
+  } else if (cardLayoutStart === "cozy") {
+    webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
   } else {
-    info(`Configured to not show card upon job ${state}.`);
+    // for complete layout
+    webhookBody = formatCompleteLayout(commit, status, elapsedSeconds);
   }
+
+  submitNotification(webhookBody);
 }
 
 export async function getWorkflowRunStatus() {
