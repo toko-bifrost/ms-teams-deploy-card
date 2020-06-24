@@ -1,8 +1,10 @@
 import { Octokit } from "@octokit/rest";
+import { getInput, warning, info } from "@actions/core";
+import yaml from "yaml";
+
 import { escapeMarkdownTokens } from "../utils";
 import { Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
-import { getInput } from "@actions/core";
 
 export function formatFilesToDisplay(
   files: Octokit.ReposGetCommitResponseFilesItem[],
@@ -34,12 +36,12 @@ export function formatFilesToDisplay(
 
 export function formatCompleteLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status: string,
+  conclusion: string,
   elapsedSeconds?: number
 ) {
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const branchUrl = `${repoUrl}/tree/${process.env.GITHUB_REF}`;
-  const webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
+  const webhookBody = formatCozyLayout(commit, conclusion, elapsedSeconds);
   const section = webhookBody.sections[0];
 
   // for complete layout, just replace activityText with potentialAction
@@ -52,9 +54,9 @@ export function formatCompleteLayout(
   ];
 
   // Set status and elapsedSeconds
-  let labels = `\`${status.toUpperCase()}\``;
+  let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
   // Set section facts
@@ -70,6 +72,26 @@ export function formatCompleteLayout(
     ),
     new Fact("Repository & branch:", `[${branchUrl}](${branchUrl})`),
   ];
+
+  // Set custom facts
+  const customFacts = getInput("custom-facts");
+  if (customFacts) {
+    try {
+      let customFactsCounter = 0;
+      const customFactsList = yaml.parse(customFacts);
+      if (Array.isArray(customFactsList)) {
+        (customFactsList as any[]).forEach((fact) => {
+          if (fact.name !== undefined && fact.value !== undefined) {
+            section.facts?.push(new Fact(fact.name + ":", fact.value));
+            customFactsCounter++;
+          }
+        });
+      }
+      info(`Added ${customFactsCounter} custom facts.`);
+    } catch {
+      warning("Invalid custom-facts value.");
+    }
+  }
 
   // Set environment name
   const environment = getInput("environment");

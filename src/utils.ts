@@ -38,6 +38,7 @@ export async function getOctokitCommit() {
 
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
+
   return await octokit.repos.getCommit({
     owner: runInfo.owner,
     repo: runInfo.repo,
@@ -48,6 +49,7 @@ export async function getOctokitCommit() {
 export function submitNotification(webhookBody: WebhookBody) {
   const webhookUri = getInput("webhook-uri", { required: true });
   const webhookBodyJson = JSON.stringify(webhookBody, undefined, 2);
+
   return fetch(webhookUri, {
     method: "POST",
     headers: {
@@ -63,36 +65,24 @@ export function submitNotification(webhookBody: WebhookBody) {
     .catch(console.error);
 }
 
-export async function formatAndNotify(state: "start" | "exit") {
-  const showCard = getInput(`show-on-${state}`).trim() == "true";
+export async function formatAndNotify(
+  state: "start" | "exit",
+  conclusion = "in_progress",
+  elapsedSeconds?: number
+) {
+  let webhookBody: WebhookBody;
+  const commit = await getOctokitCommit();
+  const cardLayoutStart = getInput(`card-layout-${state}`);
 
-  if (showCard) {
-    let webhookBody: WebhookBody;
-    const commit = await getOctokitCommit();
-    const cardLayoutStart = getInput(`card-layout-${state}`);
-
-    let status = "IN_PROGRESS";
-    let elapsedSeconds;
-
-    if (state === "exit") {
-      const workflowRunStatus = await getWorkflowRunStatus();
-      status = workflowRunStatus.status;
-      elapsedSeconds = workflowRunStatus.elapsedSeconds;
-    }
-
-    if (cardLayoutStart === "compact") {
-      webhookBody = formatCompactLayout(commit, status, elapsedSeconds);
-    } else if (cardLayoutStart === "cozy") {
-      webhookBody = formatCozyLayout(commit, status, elapsedSeconds);
-    } else {
-      // for complete layout
-      webhookBody = formatCompleteLayout(commit, status, elapsedSeconds);
-    }
-
-    submitNotification(webhookBody);
+  if (cardLayoutStart === "compact") {
+    webhookBody = formatCompactLayout(commit, conclusion, elapsedSeconds);
+  } else if (cardLayoutStart === "cozy") {
+    webhookBody = formatCozyLayout(commit, conclusion, elapsedSeconds);
   } else {
-    info(`Configured to not show card upon job ${state}.`);
+    webhookBody = formatCompleteLayout(commit, conclusion, elapsedSeconds);
   }
+
+  submitNotification(webhookBody);
 }
 
 export async function getWorkflowRunStatus() {
@@ -104,21 +94,37 @@ export async function getWorkflowRunStatus() {
     repo: runInfo.repo,
     run_id: parseInt(runInfo.runId || "1"),
   });
+
   const job = workflowJobs.data.jobs.find(
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
       job.name === process.env.GITHUB_JOB
   );
-  const conclusionKeys = Object.keys(CONCLUSION_THEMES);
-  const lastStep = job?.steps
-    .reverse()
-    .find(
-      (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
-        conclusionKeys.includes(step.conclusion)
-    );
+
+  let lastStep;
+  const stoppedStep = job?.steps.find(
+    (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
+      step.conclusion === "failure" ||
+      step.conclusion === "timed_out" ||
+      step.conclusion === "cancelled" ||
+      step.conclusion === "action_required"
+  );
+
+  if (stoppedStep) {
+    lastStep = stoppedStep;
+  } else {
+    lastStep = job?.steps
+      .reverse()
+      .find(
+        (
+          step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+        ) => step.status === "completed"
+      );
+  }
+
   const startTime = moment(job?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    status: lastStep?.conclusion || "COMPLETED",
+    conclusion: lastStep?.conclusion,
   };
 }

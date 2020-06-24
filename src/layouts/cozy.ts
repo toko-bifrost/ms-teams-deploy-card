@@ -9,7 +9,7 @@ export const OCTOCAT_LOGO_URL =
 
 export function formatCozyLayout(
   commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
-  status: string,
+  conclusion: string,
   elapsedSeconds?: number
 ) {
   const timezone = getInput("timezone") || "UTC";
@@ -22,9 +22,9 @@ export function formatCozyLayout(
   const statusUrl = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
   // Set status and elapsedSeconds
-  let labels = `\`${status.toUpperCase()}\``;
+  let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${status.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
   }
 
   // Set environment name
@@ -34,7 +34,7 @@ export function formatCozyLayout(
   }
 
   // Set themeColor
-  webhookBody.themeColor = CONCLUSION_THEMES[status] || "957DAD";
+  webhookBody.themeColor = CONCLUSION_THEMES[conclusion] || "957DAD";
 
   const author = commit.data.author;
   // Set sections
