@@ -40,6 +40,10 @@ inputs:
     description: Show the MS Teams card upon failure only of this Github Actions job
     required: false
     default: false
+  custom-facts:
+    description: YAML-parseable multiline string defining the list of object with name and value to display on the facts table
+    required: false
+    default: null
   include-files:
     description: Only for complete layout; Set false to exclude list of files
     required: false

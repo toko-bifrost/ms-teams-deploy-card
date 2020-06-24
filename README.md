@@ -56,6 +56,7 @@ jobs:
 | `show-on-start`     | `false`  | `true`     | Show an MS Teams card upon **_starting_** this Github Actions job                                                                                                                                                                                                          |
 | `show-on-exit`      | `false`  | `true`     | Show an MS Teams card upon **_exiting_** this Github Actions job, regardless if it's a successful or a failed exit                                                                                                                                                         |
 | `show-on-failure`   | `false`  | `false`    | Show an MS Teams card upon **_exiting_** this Github Actions job and status is `FAILURE`; **This will override any boolean value of `show-on-exit`**, e.g. with `show-on-exit=false` and `show-on-failure=true`, the notification card will still proceed upon job failure |
+| `custom-facts`      | `false`  | `null`     | YAML-parseable string defining a list of objects with `name` and `value` to display alongside existing facts. Only for `complete` layout.                                                                                                                                  |
 | `include-files`     | `false`  | `true`     | Include the list of files when `layout` is set to `complete`                                                                                                                                                                                                               |
 | `allowed-file-len`  | `false`  | `7`        | Allowed number of changed files to display, when `include-files` is set to `true`                                                                                                                                                                                          |
 
@@ -70,8 +71,25 @@ jobs:
 ### Known Issues
 
 - Avoid naming your secrets with the prefix `GITHUB_` as secrets are being used as environment variables, and they are reserved for Github Actions' use only. Better stick with `CI_GITHUB_TOKEN`.
+
 - As this is still in development, always use the working latest version from the `Releases`, as they have more bug fixes and added features.
+
+- If you are going to set `custom-facts` with the `complete` layout, look out for the pipe symbol (`|`). Github Actions only accept `string`, `number`, and `boolean` as parameters on job steps. To bypass this restriction and to instill YAML list formatting, we have to set it with a YAML-parseable multiline string containing a YAML list of objects with `name` and `value`. If there is an error in YAML parsing, no custom facts will be appended to the table.
+
+```
+      - uses: toko-bifrost/ms-teams-deploy-card@master
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
+          custom-facts: |
+            - name: Custom Fact 1
+              value: Random URL maybe
+            - name: Pull Request
+              value: http://example.com/${{ github.run_id }}
+```
+
 - Always set this job with `if: always()` when there are steps between `actions/checkout@v2` and this job.
+
 - As much as possible, always set this Github action right after `actions/checkout@v2` and before any job steps. The following diagram shows when this job if going to trigger if done the right way.
 
 ```
