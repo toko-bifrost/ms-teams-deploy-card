@@ -4,9 +4,9 @@ import { formatAndNotify, getWorkflowRunStatus } from "./utils";
 try {
   setTimeout(async () => {
     const showCardOnExit =
-      getInput(`show-on-exit`).trim().toLowerCase() == "true";
+      getInput(`show-on-exit`).trim().toLowerCase() === "true";
     const showCardOnFailure =
-      getInput(`show-on-failure`).trim().toLowerCase() == "true";
+      getInput(`show-on-failure`).trim().toLowerCase() === "true";
 
     const workflowRunStatus = await getWorkflowRunStatus();
     if (

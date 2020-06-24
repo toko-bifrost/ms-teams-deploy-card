@@ -38,6 +38,7 @@ export async function getOctokitCommit() {
 
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
+
   return await octokit.repos.getCommit({
     owner: runInfo.owner,
     repo: runInfo.repo,
@@ -48,6 +49,7 @@ export async function getOctokitCommit() {
 export function submitNotification(webhookBody: WebhookBody) {
   const webhookUri = getInput("webhook-uri", { required: true });
   const webhookBodyJson = JSON.stringify(webhookBody, undefined, 2);
+
   return fetch(webhookUri, {
     method: "POST",
     headers: {
@@ -65,7 +67,7 @@ export function submitNotification(webhookBody: WebhookBody) {
 
 export async function formatAndNotify(
   state: "start" | "exit",
-  conclusion = "IN_PROGRESS",
+  conclusion = "in_progress",
   elapsedSeconds?: number
 ) {
   let webhookBody: WebhookBody;
@@ -92,10 +94,12 @@ export async function getWorkflowRunStatus() {
     repo: runInfo.repo,
     run_id: parseInt(runInfo.runId || "1"),
   });
+
   const job = workflowJobs.data.jobs.find(
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
       job.name === process.env.GITHUB_JOB
   );
+
   let lastStep;
   const stoppedStep = job?.steps.find(
     (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
@@ -104,6 +108,7 @@ export async function getWorkflowRunStatus() {
       step.conclusion === "cancelled" ||
       step.conclusion === "action_required"
   );
+
   if (stoppedStep) {
     lastStep = stoppedStep;
   } else {
@@ -112,7 +117,7 @@ export async function getWorkflowRunStatus() {
       .find(
         (
           step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
-        ) => step.status !== "completed"
+        ) => step.status === "completed"
       );
   }
 
