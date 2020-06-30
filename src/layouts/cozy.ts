@@ -1,8 +1,11 @@
 import { Octokit } from "@octokit/rest";
 import moment from "moment-timezone";
-import { WebhookBody } from "../models";
+import yaml from "yaml";
 import { getInput } from "@actions/core";
+
+import { WebhookBody } from "../models";
 import { CONCLUSION_THEMES } from "../constants";
+import { renderActions } from "../utils";
 
 export const OCTOCAT_LOGO_URL =
   "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
@@ -19,7 +22,6 @@ export function formatCozyLayout(
   const webhookBody = new WebhookBody();
   const repoUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
   const shortSha = process.env.GITHUB_SHA?.substr(0, 7);
-  const statusUrl = `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
   // Set status and elapsedSeconds
   let labels = `\`${conclusion.toUpperCase()}\``;
@@ -29,12 +31,21 @@ export function formatCozyLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment.trim() !== "") {
+  if (environment !== "") {
     labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
   // Set themeColor
   webhookBody.themeColor = CONCLUSION_THEMES[conclusion] || "957DAD";
+
+  // Get potential actions
+  const actions = renderActions(
+    `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+    commit.data.html_url
+  );
+  const actionsConcat = actions
+    .map((action) => ` &nbsp; &nbsp; [${action.name}](${action.target})`)
+    .join("");
 
   const author = commit.data.author;
   // Set sections
@@ -45,8 +56,9 @@ export function formatCozyLayout(
       activitySubtitle: author
         ? `by [@${author.login}](${author.html_url}) on ${nowFmt}`
         : nowFmt,
-      activityText: `${labels} &nbsp; &nbsp; [View status](${statusUrl}) &nbsp; &nbsp; [Review diffs](${commit.data.html_url})`,
+      activityText: `${labels}${actionsConcat}`,
     },
   ];
+
   return webhookBody;
 }

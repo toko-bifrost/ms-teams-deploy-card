@@ -22,7 +22,7 @@ export function formatCompactLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment.trim() !== "") {
+  if (environment !== "") {
     labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
@@ -33,5 +33,6 @@ export function formatCompactLayout(
     `${labels} &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
     `(commit [${shortSha}](${commit.data.html_url})) on [${process.env.GITHUB_REPOSITORY}](${repoUrl}) ` +
     `by [@${author.login}](${author.html_url})`;
+
   return webhookBody;
 }

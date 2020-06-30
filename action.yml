@@ -44,6 +44,26 @@ inputs:
     description: YAML-parseable multiline string defining the list of object with name and value to display on the facts table
     required: false
     default: null
+  enable-view-status-action:
+    description: Enable an action to view the deployment status
+    required: false
+    default: true
+  enable-review-diffs-action:
+    description: Enable an action to review commit diffs
+    required: false
+    default: true
+  view-status-action-text:
+    description: Customize action text in viewing the deployment status
+    required: false
+    default: View build/deploy status
+  review-diffs-action-text:
+    description: Customize action text in reviewing commit diffs
+    required: false
+    default: Review commit diffs
+  custom-actions:
+    description: Add more actions and links on cozy and complete layout
+    required: false
+    default: null
   include-files:
     description: Only for complete layout; Set false to exclude list of files
     required: false

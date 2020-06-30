@@ -1,9 +1,10 @@
 import { Octokit } from "@octokit/rest";
-import { setOutput, info, getInput } from "@actions/core";
+import { setOutput, info, getInput, warning } from "@actions/core";
 import fetch, { Response } from "node-fetch";
 import moment from "moment";
+import yaml from "yaml";
 
-import { WebhookBody } from "./models";
+import { WebhookBody, PotentialAction } from "./models";
 import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
@@ -127,4 +128,43 @@ export async function getWorkflowRunStatus() {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
     conclusion: lastStep?.conclusion,
   };
+}
+
+export function renderActions(statusUrl: string, diffUrl: string) {
+  const actions: PotentialAction[] = [];
+  if (getInput("enable-view-status-action").toLowerCase() === "true") {
+    actions.push(
+      new PotentialAction(getInput("view-status-action-text"), [statusUrl])
+    );
+  }
+  if (getInput("enable-review-diffs-action").toLowerCase() === "true") {
+    actions.push(
+      new PotentialAction(getInput("review-diffs-action-text"), [diffUrl])
+    );
+  }
+
+  // Set custom actions
+  const customActions = getInput("custom-actions");
+  if (customActions && customActions.toLowerCase() !== "null") {
+    try {
+      let customActionsCounter = 0;
+      const customActionsList = yaml.parse(customActions);
+      if (Array.isArray(customActionsList)) {
+        (customActionsList as any[]).forEach((action) => {
+          if (
+            action.text !== undefined &&
+            action.url !== undefined &&
+            (action.url as string).match(/https?:\/\/\S+/g)
+          ) {
+            actions.push(new PotentialAction(action.text, [action.url]));
+            customActionsCounter++;
+          }
+        });
+      }
+      info(`Added ${customActionsCounter} custom facts.`);
+    } catch {
+      warning("Invalid custom-actions value.");
+    }
+  }
+  return actions;
 }
