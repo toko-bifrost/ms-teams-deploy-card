@@ -15,12 +15,3 @@ jobs:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
           timezone: Australia/Sydney
-          card-layout-start: complete
-          show-on-exit: false
-          custom-actions: |
-            - text: View PR
-              url: http://valid.uri.com
-            - text: View CI
-              url: http://example.com/${{ github.run_id }}
-
-      - run: exit 0
