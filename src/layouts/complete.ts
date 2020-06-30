@@ -2,7 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { getInput, warning, info } from "@actions/core";
 import yaml from "yaml";
 
-import { escapeMarkdownTokens } from "../utils";
+import { escapeMarkdownTokens, getDefaultActions } from "../utils";
 import { Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
 
@@ -46,12 +46,10 @@ export function formatCompleteLayout(
 
   // for complete layout, just replace activityText with potentialAction
   section.activityText = undefined;
-  section.potentialAction = [
-    new PotentialAction("View build/deploy status", [
-      `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
-    ]),
-    new PotentialAction("Review commit diffs", [commit.data.html_url]),
-  ];
+  section.potentialAction = getDefaultActions(
+    `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+    commit.data.html_url
+  );
 
   // Set status and elapsedSeconds
   let labels = `\`${conclusion.toUpperCase()}\``;
