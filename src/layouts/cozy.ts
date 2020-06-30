@@ -45,7 +45,7 @@ export function formatCozyLayout(
   );
   const actionsConcat = actions
     .map((action) => ` &nbsp; &nbsp; [${action.name}](${action.target})`)
-    .join();
+    .join("");
 
   const author = commit.data.author;
   // Set sections
