@@ -130,14 +130,14 @@ export async function getWorkflowRunStatus() {
   };
 }
 
-export function getDefaultActions(statusUrl: string, diffUrl: string) {
+export function renderActions(statusUrl: string, diffUrl: string) {
   const actions: PotentialAction[] = [];
-  if (getInput("enable-view-status-action").trim().toLowerCase() === "true") {
+  if (getInput("enable-view-status-action").toLowerCase() === "true") {
     actions.push(
       new PotentialAction(getInput("view-status-action-text"), [statusUrl])
     );
   }
-  if (getInput("enable-review-diffs-action").trim().toLowerCase() === "true") {
+  if (getInput("enable-review-diffs-action").toLowerCase() === "true") {
     actions.push(
       new PotentialAction(getInput("review-diffs-action-text"), [diffUrl])
     );
@@ -145,7 +145,7 @@ export function getDefaultActions(statusUrl: string, diffUrl: string) {
 
   // Set custom actions
   const customActions = getInput("custom-actions");
-  if (customActions) {
+  if (customActions && customActions.toLowerCase() !== "null") {
     try {
       let customActionsCounter = 0;
       const customActionsList = yaml.parse(customActions);

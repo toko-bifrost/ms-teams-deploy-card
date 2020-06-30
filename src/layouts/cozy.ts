@@ -5,7 +5,7 @@ import { getInput } from "@actions/core";
 
 import { WebhookBody } from "../models";
 import { CONCLUSION_THEMES } from "../constants";
-import { getDefaultActions } from "../utils";
+import { renderActions } from "../utils";
 
 export const OCTOCAT_LOGO_URL =
   "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
@@ -31,7 +31,7 @@ export function formatCozyLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment.trim() !== "") {
+  if (environment !== "") {
     labels += ` \`ENV:${environment.toUpperCase()}\``;
   }
 
@@ -39,7 +39,7 @@ export function formatCozyLayout(
   webhookBody.themeColor = CONCLUSION_THEMES[conclusion] || "957DAD";
 
   // Get potential actions
-  const actions = getDefaultActions(
+  const actions = renderActions(
     `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
     commit.data.html_url
   );
@@ -59,5 +59,6 @@ export function formatCozyLayout(
       activityText: `${labels}${actionsConcat}`,
     },
   ];
+
   return webhookBody;
 }

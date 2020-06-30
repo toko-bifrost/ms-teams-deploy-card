@@ -2,7 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { getInput, warning, info } from "@actions/core";
 import yaml from "yaml";
 
-import { escapeMarkdownTokens, getDefaultActions } from "../utils";
+import { escapeMarkdownTokens, renderActions } from "../utils";
 import { Fact, PotentialAction } from "../models";
 import { formatCozyLayout } from "./cozy";
 
@@ -46,7 +46,7 @@ export function formatCompleteLayout(
 
   // for complete layout, just replace activityText with potentialAction
   section.activityText = undefined;
-  section.potentialAction = getDefaultActions(
+  section.potentialAction = renderActions(
     `${repoUrl}/actions/runs/${process.env.GITHUB_RUN_ID}`,
     commit.data.html_url
   );
@@ -73,7 +73,7 @@ export function formatCompleteLayout(
 
   // Set custom facts
   const customFacts = getInput("custom-facts");
-  if (customFacts) {
+  if (customFacts && customFacts.toLowerCase() !== "null") {
     try {
       let customFactsCounter = 0;
       const customFactsList = yaml.parse(customFacts);
@@ -93,7 +93,7 @@ export function formatCompleteLayout(
 
   // Set environment name
   const environment = getInput("environment");
-  if (environment.trim() !== "") {
+  if (environment !== "") {
     section.facts.splice(
       1,
       0,
@@ -102,9 +102,7 @@ export function formatCompleteLayout(
   }
 
   // Set list of files
-  const includeFiles =
-    getInput("include-files").trim().toLowerCase() === "true";
-  if (includeFiles) {
+  if (getInput("include-files").toLowerCase() === "true") {
     const allowedFileLen = getInput("allowed-file-len").toLowerCase();
     const allowedFileLenParsed = parseInt(
       allowedFileLen === "" ? "7" : allowedFileLen
