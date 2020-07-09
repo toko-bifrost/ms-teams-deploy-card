@@ -35,9 +35,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - if: always()
       # this is the new step
       - uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        if: always()
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
