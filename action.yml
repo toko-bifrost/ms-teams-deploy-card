@@ -72,6 +72,10 @@ inputs:
     description: Allowed number of files to display
     required: false
     default: 7
+  job-name:
+    description: Configure the job name when using mmore than one job per workflow
+    required: false
+    default: null
 
 runs:
   using: node12
