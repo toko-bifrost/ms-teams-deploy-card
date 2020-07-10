@@ -68,6 +68,10 @@ inputs:
     description: Only for complete layout; Set false to exclude list of files
     required: false
     default: true
+  status:
+    description: The job status for the current context
+    required: true
+    default: success
   allowed-file-len:
     description: Allowed number of files to display
     required: false
