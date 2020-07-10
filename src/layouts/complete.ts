@@ -1,13 +1,22 @@
-import { Octokit } from "@octokit/rest";
 import { getInput, warning, info } from "@actions/core";
+import { OctokitResponse, ReposGetCommitResponseData } from "@octokit/types";
 import yaml from "yaml";
 
 import { escapeMarkdownTokens, renderActions } from "../utils";
-import { Fact, PotentialAction } from "../models";
+import { Fact } from "../models";
 import { formatCozyLayout } from "./cozy";
 
 export function formatFilesToDisplay(
-  files: Octokit.ReposGetCommitResponseFilesItem[],
+  files: {
+    additions: number;
+    blob_url: string;
+    changes: number;
+    deletions: number;
+    filename: string;
+    patch: string;
+    raw_url: string;
+    status: string;
+  }[],
   allowedLength: number,
   htmlUrl: string
 ) {
@@ -35,7 +44,7 @@ export function formatFilesToDisplay(
 }
 
 export function formatCompleteLayout(
-  commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
+  commit: OctokitResponse<ReposGetCommitResponseData>,
   conclusion: string,
   elapsedSeconds?: number
 ) {

@@ -3,7 +3,8 @@ name: MS Teams Deploy Card
 on: [push]
 
 jobs:
-  build:
+  build1:
+    name: Build with custom name
     runs-on: ubuntu-latest
 
     steps:

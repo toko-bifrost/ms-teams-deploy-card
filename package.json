@@ -8,17 +8,18 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@actions/core": "^1.2.2",
-    "@octokit/rest": "^16.43.1",
-    "moment-timezone": "^0.5.27",
+    "@actions/core": "^1.2.4",
+    "@octokit/rest": "^18.0.0",
+    "@octokit/types": "^5.0.1",
+    "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.0",
     "yaml": "^1.10.0"
   },
   "devDependencies": {
-    "@types/moment-timezone": "^0.5.12",
-    "@types/node-fetch": "^2.5.4",
-    "@zeit/ncc": "^0.21.0",
-    "typescript": "^3.7.5"
+    "@types/moment-timezone": "^0.5.13",
+    "@types/node-fetch": "^2.5.7",
+    "@zeit/ncc": "^0.22.3",
+    "typescript": "^3.9.6"
   },
   "scripts": {
     "ncc": "ncc build src/index.ts -m -o dist/main && ncc build src/post.ts -m -o dist/post"

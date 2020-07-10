@@ -1,7 +1,6 @@
-import { Octokit } from "@octokit/rest";
 import moment from "moment-timezone";
-import yaml from "yaml";
 import { getInput } from "@actions/core";
+import { OctokitResponse, ReposGetCommitResponseData } from "@octokit/types";
 
 import { WebhookBody } from "../models";
 import { CONCLUSION_THEMES } from "../constants";
@@ -11,7 +10,7 @@ export const OCTOCAT_LOGO_URL =
   "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
 
 export function formatCozyLayout(
-  commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
+  commit: OctokitResponse<ReposGetCommitResponseData>,
   conclusion: string,
   elapsedSeconds?: number
 ) {

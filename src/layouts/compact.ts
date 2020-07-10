@@ -1,10 +1,11 @@
-import { Octokit } from "@octokit/rest";
-import { WebhookBody } from "../models";
 import { getInput } from "@actions/core";
+import { OctokitResponse, ReposGetCommitResponseData } from "@octokit/types";
+
+import { WebhookBody } from "../models";
 import { CONCLUSION_THEMES } from "../constants";
 
 export function formatCompactLayout(
-  commit: Octokit.Response<Octokit.ReposGetCommitResponse>,
+  commit: OctokitResponse<ReposGetCommitResponseData>,
   conclusion: string,
   elapsedSeconds?: number
 ) {
