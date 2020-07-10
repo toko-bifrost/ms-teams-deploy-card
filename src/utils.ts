@@ -98,7 +98,7 @@ export async function getWorkflowRunStatus() {
 
   const job = workflowJobs.data.jobs.find(
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
-      job.name === process.env.GITHUB_JOB
+      job.name === process.env.GITHUB_JOB || job.name === process.env.GITHUB_JOB_CUSTOM_NAME
   );
 
   let lastStep;
