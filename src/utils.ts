@@ -90,6 +90,9 @@ export async function getWorkflowRunStatus() {
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
+
+  console.table(process.env);
+
   const job = await octokit.actions.getJobForWorkflowRun({
     owner: runInfo.owner,
     repo: runInfo.repo,
