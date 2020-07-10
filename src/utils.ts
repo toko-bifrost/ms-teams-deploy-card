@@ -89,6 +89,7 @@ export async function formatAndNotify(
 export async function getWorkflowRunStatus() {
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
+  const status = getInput("status", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
   const workflowJobs = await octokit.actions.listJobsForWorkflowRun({
     owner: runInfo.owner,
@@ -96,7 +97,7 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  info("-> status: " + process.env.STATUS)
+  info("-> status: " + status)
 
   const job = workflowJobs.data.jobs.find(
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
@@ -128,7 +129,7 @@ export async function getWorkflowRunStatus() {
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    conclusion: lastStep?.conclusion,
+    conclusion: status,
   };
 }
 
