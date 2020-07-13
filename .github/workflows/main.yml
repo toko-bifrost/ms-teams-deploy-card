@@ -4,6 +4,12 @@ on: [push]
 
 jobs:
   build1:
+    runs-on: ubuntu-latest
+    steps:
+      - run: date
+      - run: cat /home/runner/work/_temp/_github_workflow/event.json | jq .
+
+  build2:
     name: Build with custom name
     runs-on: ubuntu-latest
 
