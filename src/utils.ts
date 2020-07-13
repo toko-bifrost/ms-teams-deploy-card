@@ -8,6 +8,7 @@ import { WebhookBody, PotentialAction } from "./models";
 import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
+import { ActionsListJobsForWorkflowRunResponseData } from "@octokit/types";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -27,7 +28,6 @@ export function getRunInformation() {
     repo,
     ref: process.env.GITHUB_SHA || "",
     branchUrl: `https://github.com/${process.env.GITHUB_REPOSITORY}/tree/${process.env.GITHUB_REF}`,
-    jobId: process.env.GITHUB_ACTION || "0",
     runId: process.env.GITHUB_RUN_ID,
     runNum: process.env.GITHUB_RUN_NUMBER,
   };
@@ -91,16 +91,21 @@ export async function getWorkflowRunStatus() {
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
 
-  console.table(process.env);
-
-  const job = await octokit.actions.getJobForWorkflowRun({
+  const workflowJobs = await octokit.actions.listJobsForWorkflowRun({
     owner: runInfo.owner,
     repo: runInfo.repo,
-    job_id: parseInt(runInfo.jobId),
+    run_id: parseInt(runInfo.runId || "0"),
   });
 
+  console.log(process.env);
+  console.log(workflowJobs.data.jobs);
+
+  const job = workflowJobs.data.jobs.find(
+    (job) => job.name === process.env.GITHUB_JOB
+  );
+
   let lastStep;
-  const stoppedStep = job.data.steps.find(
+  const stoppedStep = job?.steps.find(
     (step) =>
       step.conclusion === "failure" ||
       step.conclusion === "timed_out" ||
@@ -111,12 +116,10 @@ export async function getWorkflowRunStatus() {
   if (stoppedStep) {
     lastStep = stoppedStep;
   } else {
-    lastStep = job.data.steps
-      .reverse()
-      .find((step) => step.status === "completed");
+    lastStep = job?.steps.reverse().find((step) => step.status === "completed");
   }
 
-  const startTime = moment(job.data.started_at, moment.ISO_8601);
+  const startTime = moment(job?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
