@@ -8,7 +8,6 @@ import { WebhookBody, PotentialAction } from "./models";
 import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
-import { ActionsListJobsForWorkflowRunResponseData } from "@octokit/types";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -98,7 +97,7 @@ export async function getWorkflowRunStatus() {
   });
 
   console.log(process.env);
-  console.log(workflowJobs.data.jobs);
+  workflowJobs.data.jobs.forEach((job) => console.log(job.steps));
 
   const job = workflowJobs.data.jobs.find(
     (job) => job.name === process.env.GITHUB_JOB
