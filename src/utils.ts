@@ -96,9 +96,6 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "0"),
   });
 
-  console.log(process.env);
-  workflowJobs.data.jobs.forEach((job) => console.log(job.steps));
-
   const job = workflowJobs.data.jobs.find(
     (job) => job.name === process.env.GITHUB_JOB
   );

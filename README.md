@@ -35,9 +35,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - if: always()
       # this is the new step
       - uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        if: always()
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
@@ -111,6 +111,8 @@ jobs:
 ```
 
 - Always set this job with `if: always()` when there are steps between `actions/checkout@v2` and this job.
+
+- Status `IN_PROGRESS` upon job completion means you have set the `jobs.<job_id>.name`. It is encouraged to exclude setting the `jobs.<job_id>.name`. It is because `GITHUB_JOB` is set with `jobs.<job_id>`, and the Github API gives off the value of `jobs.<job_id>.name`, if set. Thus, there is no way to match the current job with the ones in the Github API upon post-job conclusion.
 
 - As much as possible, always set this Github action right after `actions/checkout@v2` and before any job steps. The following diagram shows when this job if going to trigger if done the right way.
 
