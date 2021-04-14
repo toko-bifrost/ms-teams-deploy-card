@@ -3,6 +3,7 @@ import { formatAndNotify, getWorkflowRunStatus } from "./utils";
 
 try {
   // setTimeout to give time for Github API to show up the final conclusion
+  info("Init post ")
   setTimeout(async () => {
     const showCardOnExit = getInput(`show-on-exit`).toLowerCase() === "true";
     const showCardOnFailure =
@@ -14,6 +15,8 @@ try {
       (showCardOnExit && !showCardOnFailure) ||
       (showCardOnFailure && workflowRunStatus.conclusion !== "success")
     ) {
+      info("Will format and notify")
+      info(`Conclusion ${workflowRunStatus.conclusion}`)
       formatAndNotify(
         "exit",
         workflowRunStatus.conclusion,

@@ -87,6 +87,7 @@ export async function formatAndNotify(
 }
 
 export async function getWorkflowRunStatus() {
+  info("Init get workflow status")
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -101,6 +102,8 @@ export async function getWorkflowRunStatus() {
       job.name === process.env.GITHUB_JOB
   );
 
+  info(`All steps ${job?.steps}`)
+  
   let lastStep;
   const stoppedStep = job?.steps.find(
     (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
@@ -114,7 +117,9 @@ export async function getWorkflowRunStatus() {
     info(`last step error: ${stoppedStep}`)
     lastStep = stoppedStep;
   } else {
+    info("will get the workflow sccess step")
     lastStep = job?.steps
+      .reverse()
       .find(
         (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => 
         step.status === "success" ||
@@ -123,6 +128,8 @@ export async function getWorkflowRunStatus() {
 
     info(`Last step: ${lastStep}`)
   }
+
+  info(`last step conclusion: ${lastStep?.conclusion}`)
 
   const startTime = moment(job?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
