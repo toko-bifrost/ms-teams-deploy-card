@@ -116,8 +116,7 @@ export async function getWorkflowRunStatus() {
     lastStep = job?.steps
       .find(
         (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => 
-        step.status === "success" ||
-        step.status === "skipped"
+        step.status === "success"
       );
   }
 
