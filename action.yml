@@ -72,6 +72,10 @@ inputs:
     description: Allowed number of files to display
     required: false
     default: 7
+  current-status:
+    description: Allow the user set the current status of message
+    required: false
+    default: null
 
 runs:
   using: node12
