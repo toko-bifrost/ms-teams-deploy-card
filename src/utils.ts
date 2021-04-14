@@ -116,9 +116,7 @@ export async function getWorkflowRunStatus() {
     lastStep = job?.steps
       .reverse()
       .find(
-        (
-          step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
-        ) => step.status === "completed"
+        (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => step.status === "completed"
       );
   }
 
