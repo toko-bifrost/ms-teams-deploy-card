@@ -102,6 +102,13 @@ export async function getWorkflowRunStatus() {
       job.name === process.env.GITHUB_JOB
   );
 
+  info(`Github job name env : ${process.env.GITHUB_JOB}`)
+
+  workflowJobs.data.jobs.forEach(element =>{
+    info(`Job name = ${element.name}`)
+    info(`Job Id = ${element.id}`)
+  })
+
   if (job) {
     info("Job exist")
   } else {
