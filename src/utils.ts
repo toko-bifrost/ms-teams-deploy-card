@@ -102,6 +102,12 @@ export async function getWorkflowRunStatus() {
       job.name === process.env.GITHUB_JOB
   );
 
+  job?.steps.forEach(element => {
+    info(`Step name : ${element.name}`)
+    info(`Step Conclusion : ${element.conclusion}`)
+    info(`Step status : ${element.status}`)
+  });
+
   info(`All steps ${job?.steps}`)
   
   const lastStep = job?.steps.find(
