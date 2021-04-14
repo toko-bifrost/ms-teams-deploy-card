@@ -111,13 +111,17 @@ export async function getWorkflowRunStatus() {
   );
 
   if (stoppedStep) {
+    info(`last step error: ${stoppedStep}`)
     lastStep = stoppedStep;
   } else {
     lastStep = job?.steps
       .find(
         (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => 
-        step.status === "success"
+        step.status === "success" ||
+        step.conclusion === "skipped"
       );
+
+    info(`Last step: ${lastStep}`)
   }
 
   const startTime = moment(job?.started_at, moment.ISO_8601);
