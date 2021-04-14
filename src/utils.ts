@@ -102,6 +102,16 @@ export async function getWorkflowRunStatus() {
       job.name === process.env.GITHUB_JOB
   );
 
+  if (job) {
+    info("Job exist")
+  } else {
+    info ("Job is null")
+  }
+
+  job?.steps.forEach(element => {
+    info(`Element = ${element}`)
+  });
+
   job?.steps.forEach(element => {
     info(`Step name : ${element.name}`)
     info(`Step Conclusion : ${element.conclusion}`)
