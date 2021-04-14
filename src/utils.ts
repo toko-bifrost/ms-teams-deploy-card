@@ -104,29 +104,15 @@ export async function getWorkflowRunStatus() {
 
   info(`All steps ${job?.steps}`)
   
-  let lastStep;
-  const stoppedStep = job?.steps.find(
+  const lastStep = job?.steps.find(
     (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
       step.conclusion === "failure" ||
       step.conclusion === "timed_out" ||
       step.conclusion === "cancelled" ||
-      step.conclusion === "action_required"
+      step.conclusion === "action_required" ||
+      step.conclusion === "success" ||
+      step.conclusion === "skipped"
   );
-
-  if (stoppedStep) {
-    info(`last step error: ${stoppedStep}`)
-    lastStep = stoppedStep;
-  } else {
-    info("will get the workflow sccess step")
-    lastStep = job?.steps
-      .find(
-        (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => 
-        step.conclusion === "success" ||
-        step.conclusion === "skipped"
-      );
-      
-    info(`Last step: ${lastStep}`)
-  }
 
   info(`last step conclusion: ${lastStep?.conclusion}`)
 
