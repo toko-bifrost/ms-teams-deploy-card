@@ -119,13 +119,12 @@ export async function getWorkflowRunStatus() {
   } else {
     info("will get the workflow sccess step")
     lastStep = job?.steps
-      .reverse()
       .find(
         (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => 
-        step.status === "success" ||
+        step.conclusion === "success" ||
         step.conclusion === "skipped"
       );
-
+      
     info(`Last step: ${lastStep}`)
   }
 
