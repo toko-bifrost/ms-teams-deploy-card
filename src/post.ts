@@ -4,11 +4,17 @@ import { formatAndNotify, getWorkflowRunStatus } from "./utils";
 try {
   // setTimeout to give time for Github API to show up the final conclusion
   setTimeout(async () => {
+    const currentStatus = getInput(`current-status`).toLowerCase() 
     const showCardOnExit = getInput(`show-on-exit`).toLowerCase() === "true";
     const showCardOnFailure =
       getInput(`show-on-failure`).toLowerCase() === "true";
 
     const workflowRunStatus = await getWorkflowRunStatus();
+
+    if (currentStatus) {
+       workflowRunStatus.conclusion = currentStatus
+    }
+
     if (
       (showCardOnExit && !showCardOnFailure) ||
       (showCardOnFailure && workflowRunStatus.conclusion !== "success")
