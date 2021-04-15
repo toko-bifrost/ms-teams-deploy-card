@@ -118,7 +118,7 @@ export async function getWorkflowRunStatus() {
   const jobs = workflowJobs.data.jobs.forEach (job => {
     let currentJobStep = job.steps.forEach( step => {
       // the conclusion are null when the step still running
-      if (step?.conclusion == null) {
+      if (step?.conclusion !== null && step.completed_at !== null) {
         info(`Step name: ${step.name}`)
         info(`Step conclusion: ${step.conclusion}`)
         info (`Start date = ${job.started_at}`)
@@ -126,7 +126,7 @@ export async function getWorkflowRunStatus() {
 
         currentStatus = step
         jobStartDate = job.started_at
-        jobCompleteDate = job.completed_at
+        jobCompleteDate = step.completed_at
       }
       
       // Some job has failed. Get out from here.
