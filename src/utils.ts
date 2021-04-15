@@ -130,6 +130,7 @@ export async function getWorkflowRunStatus() {
 
         // Some job has failed. Get out from here.
         if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+          info("undefined")
           return undefined
         }
       }
