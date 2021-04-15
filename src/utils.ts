@@ -9,6 +9,7 @@ import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
 import { CONCLUSION_THEMES } from "./constants";
+import { Collection } from "yaml/types";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -87,7 +88,6 @@ export async function formatAndNotify(
 }
 
 export async function getWorkflowRunStatus() {
-  info("Init get workflow status")
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -97,74 +97,53 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  /*const job = workflowJobs.data.jobs.find(
-    (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
-      job.name === process.env.GITHUB_JOB
-  );*/
+  let currentStatus: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+  let jobStartDate = "dummy"
+  let jobCompleteDate = "dummy"
 
   /**
-   * We have to verify all jobs. We don't know
+   * We have to verify all jobs steps. We don't know
    * if users are using multiple jobs or not. Btw,
    * we don't need to check if GITHUB_JOB env is the 
-   * same of the Octokit job name, because
-   * his name is different.
-   */
-  const jobs = workflowJobs.data.jobs
-    .find (
-      (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
-      job.name
-    )
-
-  // info(`Github job name env : ${process.env.GITHUB_JOB}`)
-
-  // workflowJobs.data.jobs.forEach(element =>{
-  //   info(`Job name = ${element.name}`)
-  //   info(`Job Id = ${element.id}`)
-  // })
-
-  // if (job) {
-  //   info("Job exist")
-  // } else {
-  //   info ("Job is null")
-  // }
-
-  // job?.steps.forEach(element => {
-  //   info(`Element = ${element}`)
-  // });
-
-  jobs?.steps.forEach(element => {
-    info(`Step name : ${element.name}`)
-    info(`Step Conclusion : ${element.conclusion}`)
-    info(`Step status : ${element.status}`)
-  });
-
-  info(`All steps ${jobs?.steps}`)
-  
-  /**
-   * Checking all state possibilities of 
-   * every single step.
+   * same of the Octokit job name, because it is different.
    * 
-   * If the follow find doesn't found anything,
-   * we will to use the current value:
-   * IN_PROGRESS
+   * @note We are using a quadratic way to search all steps.
+   * But we have just a few elements, so this does not 
+   * a performance issue
    */
-  const lastStep = jobs?.steps.find(
-    (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
-      step.conclusion === "failure" ||
-      step.conclusion === "timed_out" ||
-      step.conclusion === "cancelled" ||
-      step.conclusion === "action_required" ||
-      step.conclusion === "success" ||
-      step.conclusion === "skipped"
-  );
+  const jobs = workflowJobs.data.jobs.forEach (job => {
+    let currentJobStep = job.steps.forEach( step => {
+      currentStatus = step
+      jobStartDate = job.started_at
+      jobCompleteDate = job.completed_at
+      // Some job has failed. Get out from here.
+      if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+        return undefined
+      }
+      /**  
+       * If nothing has failed, so we have a success scenario
+       * @note avoiding skipped cases. 
+       */
+      currentStatus.conclusion = "success"
+    })
 
-  info(`last step conclusion: ${lastStep?.conclusion}`)
+    if(currentJobStep == undefined) return null
+  })
 
-  const startTime = moment(jobs?.started_at, moment.ISO_8601);
-  const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
+
+  // step.conclusion === "failure" ||
+  // step.conclusion === "timed_out" ||
+  // step.conclusion === "cancelled" ||
+  // step.conclusion === "action_required" ||
+  // step.conclusion === "success" ||
+  // step.conclusion === "skipped" 
+
+
+  const startTime = moment(jobStartDate, moment.ISO_8601);
+  const endTime = moment(jobCompleteDate, moment.ISO_8601);  
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    conclusion: lastStep?.conclusion,
+    conclusion: currentStatus!!.conclusion,
   };
 }
 
