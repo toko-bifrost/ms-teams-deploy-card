@@ -111,47 +111,39 @@ export async function getWorkflowRunStatus() {
    * @note We are using a quadratic way to search all steps.
    * But we have just a few elements, so this does not 
    * a performance issue
+   * 
+   * The conclusion steps, in accordance the documentation, are:
+   * <success>, <cancelled>, <failure> and <skipped>
    */
   const jobs = workflowJobs.data.jobs.forEach (job => {
-    info(`Job name ${job.name}`)
-
     let currentJobStep = job.steps.forEach( step => {
-      info(`Step name: ${step.name}`)
-      info(`Step conclusion: ${step.conclusion}`)
-      info (`Start date = ${job.started_at}`)
-      info (`End date = ${job.completed_at}`)
+      // the conclusion are null when the step still running
+      if (step?.conclusion == null) {
+        info(`Step name: ${step.name}`)
+        info(`Step conclusion: ${step.conclusion}`)
+        info (`Start date = ${job.started_at}`)
+        info (`End date = ${job.completed_at}`)
 
-      currentStatus = step
-      jobStartDate = job.started_at
-      jobCompleteDate = job.completed_at
+        currentStatus = step
+        jobStartDate = job.started_at
+        jobCompleteDate = job.completed_at
+      }
+      
       // Some job has failed. Get out from here.
       if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
-        info("Undefined step returning")
-        if (step?.conclusion !== null) {
-          return undefined
-        }
+        return undefined
       }
       /**  
        * If nothing has failed, so we have a success scenario
        * @note avoiding skipped cases. 
        */
-      info("Success scenario")
       currentStatus.conclusion = "success"
     })
 
     if(currentJobStep === undefined) {
-      info(" job returning null")
       return null
     }
   })
-
-
-  // step.conclusion === "failure" ||
-  // step.conclusion === "timed_out" ||
-  // step.conclusion === "cancelled" ||
-  // step.conclusion === "action_required" ||
-  // step.conclusion === "success" ||
-  // step.conclusion === "skipped" 
 
   info(`Job start date ${jobStartDate}`)
   info(`Job End date ${jobCompleteDate}`)
