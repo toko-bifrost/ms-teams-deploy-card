@@ -97,37 +97,58 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  const job = workflowJobs.data.jobs.find(
+  /*const job = workflowJobs.data.jobs.find(
     (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
       job.name === process.env.GITHUB_JOB
-  );
+  );*/
 
-  info(`Github job name env : ${process.env.GITHUB_JOB}`)
+  /**
+   * We have to verify all jobs. We don't know
+   * if users are using multiple jobs or not. Btw,
+   * we don't need to check if GITHUB_JOB env is the 
+   * same of the Octokit job name, because
+   * his name is different.
+   */
+  const jobs = workflowJobs.data.jobs
+    .find (
+      (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
+      job.name
+    )
 
-  workflowJobs.data.jobs.forEach(element =>{
-    info(`Job name = ${element.name}`)
-    info(`Job Id = ${element.id}`)
-  })
+  // info(`Github job name env : ${process.env.GITHUB_JOB}`)
 
-  if (job) {
-    info("Job exist")
-  } else {
-    info ("Job is null")
-  }
+  // workflowJobs.data.jobs.forEach(element =>{
+  //   info(`Job name = ${element.name}`)
+  //   info(`Job Id = ${element.id}`)
+  // })
 
-  job?.steps.forEach(element => {
-    info(`Element = ${element}`)
-  });
+  // if (job) {
+  //   info("Job exist")
+  // } else {
+  //   info ("Job is null")
+  // }
 
-  job?.steps.forEach(element => {
+  // job?.steps.forEach(element => {
+  //   info(`Element = ${element}`)
+  // });
+
+  jobs?.steps.forEach(element => {
     info(`Step name : ${element.name}`)
     info(`Step Conclusion : ${element.conclusion}`)
     info(`Step status : ${element.status}`)
   });
 
-  info(`All steps ${job?.steps}`)
+  info(`All steps ${jobs?.steps}`)
   
-  const lastStep = job?.steps.find(
+  /**
+   * Checking all state possibilities of 
+   * every single step.
+   * 
+   * If the follow find doesn't found anything,
+   * we will to use the current value:
+   * IN_PROGRESS
+   */
+  const lastStep = jobs?.steps.find(
     (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
       step.conclusion === "failure" ||
       step.conclusion === "timed_out" ||
@@ -139,7 +160,7 @@ export async function getWorkflowRunStatus() {
 
   info(`last step conclusion: ${lastStep?.conclusion}`)
 
-  const startTime = moment(job?.started_at, moment.ISO_8601);
+  const startTime = moment(jobs?.started_at, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
