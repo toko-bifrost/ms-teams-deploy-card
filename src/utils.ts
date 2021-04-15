@@ -137,7 +137,7 @@ export async function getWorkflowRunStatus() {
       currentStatus.conclusion = "success"
     })
 
-    if(currentJobStep == undefined) {
+    if(currentJobStep === undefined) {
       info(" job returning null")
       return null
     }
