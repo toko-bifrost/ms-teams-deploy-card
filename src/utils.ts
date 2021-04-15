@@ -88,6 +88,7 @@ export async function formatAndNotify(
 }
 
 export async function getWorkflowRunStatus() {
+  info ("Init get Workflow status")
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -112,22 +113,34 @@ export async function getWorkflowRunStatus() {
    * a performance issue
    */
   const jobs = workflowJobs.data.jobs.forEach (job => {
+    info(`Job name ${job.name}`)
+
     let currentJobStep = job.steps.forEach( step => {
+      info(`Step name: ${step.name}`)
+      info(`Step conclusion: ${step.conclusion}`)
+      info (`Start date = ${job.started_at}`)
+      info (`End date = ${job.completed_at}`)
+
       currentStatus = step
       jobStartDate = job.started_at
       jobCompleteDate = job.completed_at
       // Some job has failed. Get out from here.
       if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+        info("Undefined step returning")
         return undefined
       }
       /**  
        * If nothing has failed, so we have a success scenario
        * @note avoiding skipped cases. 
        */
+      info("Success scenario")
       currentStatus.conclusion = "success"
     })
 
-    if(currentJobStep == undefined) return null
+    if(currentJobStep == undefined) {
+      info(" job returning null")
+      return null
+    }
   })
 
 
@@ -138,7 +151,9 @@ export async function getWorkflowRunStatus() {
   // step.conclusion === "success" ||
   // step.conclusion === "skipped" 
 
-
+  info(`Job start date ${jobStartDate}`)
+  info(`Job End date ${jobCompleteDate}`)
+  info(`Conclusion ${currentStatus!!.conclusion}`)
   const startTime = moment(jobStartDate, moment.ISO_8601);
   const endTime = moment(jobCompleteDate, moment.ISO_8601);  
   return {
