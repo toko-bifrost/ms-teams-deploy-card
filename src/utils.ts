@@ -98,9 +98,8 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  let currentStatus: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+  let lastStep: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
   let jobStartDate = "dummy"
-  let jobCompleteDate = "dummy"
 
   /**
    * We have to verify all jobs steps. We don't know
@@ -117,18 +116,17 @@ export async function getWorkflowRunStatus() {
    */
   const jobs = workflowJobs.data.jobs.forEach (job => {
     let currentJobStep = job.steps.forEach( step => {
-      // the conclusion are null when the step still running
-      if (step?.conclusion !== null && step.completed_at !== null) {
+      // check if current step still running
+      if (step.completed_at !== null) {
         info(`Step name: ${step.name}`)
         info(`Step conclusion: ${step.conclusion}`)
         info (`Start date = ${job.started_at}`)
-        info (`End date = ${job.completed_at}`)
+        info (`End date = ${step.completed_at}`)
 
-        currentStatus = step
+        lastStep = step
         jobStartDate = job.started_at
-        jobCompleteDate = step.completed_at
 
-        // Some job has failed. Get out from here.
+        // Some step/job has failed. Get out from here.
         if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
           info("undefined")
           return undefined
@@ -138,22 +136,23 @@ export async function getWorkflowRunStatus() {
        * If nothing has failed, so we have a success scenario
        * @note avoiding skipped cases. 
        */
-      currentStatus.conclusion = "success"
+      lastStep.conclusion = "success"
     })
 
     if(currentJobStep === undefined) {
-      return null
+      return undefined
     }
   })
 
   info(`Job start date ${jobStartDate}`)
-  info(`Job End date ${jobCompleteDate}`)
-  info(`Conclusion ${currentStatus!!.conclusion}`)
+  info(`Job End date ${lastStep!!.completed_at}`)
+  info(`Conclusion ${lastStep!!.conclusion}`)
   const startTime = moment(jobStartDate, moment.ISO_8601);
-  const endTime = moment(jobCompleteDate, moment.ISO_8601);  
+  const endTime = moment(lastStep!!.completed_at, moment.ISO_8601); 
+
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    conclusion: currentStatus!!.conclusion,
+    conclusion: lastStep!!.conclusion,
   };
 }
 
