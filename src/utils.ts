@@ -129,7 +129,7 @@ export async function getWorkflowRunStatus() {
         // Some step/job has failed. Get out from here.
         if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
           info("Exiting steps verification")
-          return undefined
+          break
         }
        /**  
         * If nothing has failed, so we have a success scenario
@@ -138,7 +138,13 @@ export async function getWorkflowRunStatus() {
         lastStep.conclusion = "success"
       }
     }
+     // Some step/job has failed. Get out from here.
+     if (lastStep!!.conclusion !== "success" && lastStep!!.conclusion !== "skipped") {
+      info("Exiting steps verification")
+      break
+    }
    }
+   
   // const jobs = workflowJobs.data.jobs.forEach (job => {
   //   let currentJobStep = job.steps.forEach( step => {
   //     // check if current step still running
