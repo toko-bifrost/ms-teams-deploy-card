@@ -136,7 +136,7 @@ export async function getWorkflowRunStatus() {
         if (
             step?.conclusion !== "success" &&
             step?.conclusion !== "skipped"
-          ) break
+          ) return
         
        /**  
         * If nothing has failed, so we have a success scenario
@@ -145,8 +145,9 @@ export async function getWorkflowRunStatus() {
         lastStep.conclusion = "success"
       }
     }
-    // Some step/job has failed. Get out from here.
-    if (lastStep?.conclusion !== "success") break
+
+    // // Some step/job has failed. Get out from here.
+    // if (lastStep?.conclusion !== "success" ) break
    }
 
   info(`Job start date ${jobStartDate}`)
