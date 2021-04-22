@@ -114,30 +114,18 @@ export async function getWorkflowRunStatus() {
    * The conclusion steps, according to the documentation, are:
    * <success>, <cancelled>, <failure> and <skipped>
    */
+  let abort = false
   for(let job of workflowJobs.data.jobs) {
-    info(`job ${job.name}`)
-    info(`job ${job.status}`)
-    info(`job ${job.steps.length}`)
-    info(`job ${job.name}`)
     for(let step of job.steps) {
-      info("outside loop steps ")
-      info(`Step name: ${step.name}`)
-      info(`Step Conclusion: ${step.conclusion}`)
-      info(`Step en at : ${step.completed_at}`)
       // check if current step still running
       if (step.completed_at !== null) {
-        info(`Inside loop steps `)
-        info(`Step name: ${step.name}`)
-        info(`Step Conclusion: ${step.conclusion}`)
         lastStep = step
         jobStartDate = job.started_at
-
         // Some step/job has failed. Get out from here.
-        if (
-            step?.conclusion !== "success" &&
-            step?.conclusion !== "skipped"
-          ) return
-        
+        if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+            abort = true
+            break
+        }
        /**  
         * If nothing has failed, so we have a success scenario
         * @note ignoring skipped cases. 
@@ -145,9 +133,8 @@ export async function getWorkflowRunStatus() {
         lastStep.conclusion = "success"
       }
     }
-
     // // Some step/job has failed. Get out from here.
-    // if (lastStep?.conclusion !== "success" ) break
+    if (abort) break
    }
 
   info(`Job start date ${jobStartDate}`)
