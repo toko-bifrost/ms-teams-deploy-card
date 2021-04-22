@@ -134,12 +134,13 @@ export async function getWorkflowRunStatus() {
       }
       /**  
        * If nothing has failed, so we have a success scenario
-       * @note avoiding skipped cases. 
+       * @note ignoring skipped cases. 
        */
       lastStep.conclusion = "success"
     })
 
     if(currentJobStep === undefined) {
+      info("undefined 2")
       return undefined
     }
   })
