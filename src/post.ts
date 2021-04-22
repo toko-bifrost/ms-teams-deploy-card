@@ -13,14 +13,12 @@ try {
 
     if (
       (showCardOnExit && !showCardOnFailure) ||
-      (showCardOnFailure && workflowRunStatus.conclusion !== "success")
+      (showCardOnFailure && workflowRunStatus?.conclusion !== "success")
     ) {
-      info("Will format and notify")
-      info(`Conclusion ${workflowRunStatus.conclusion}`)
       formatAndNotify(
         "exit",
-        workflowRunStatus.conclusion,
-        workflowRunStatus.elapsedSeconds
+        workflowRunStatus?.conclusion,
+        workflowRunStatus?.elapsedSeconds
       );
     } else {
       info("Configured to not show card upon job exit.");

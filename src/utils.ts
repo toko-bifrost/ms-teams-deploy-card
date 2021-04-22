@@ -99,7 +99,7 @@ export async function getWorkflowRunStatus() {
   });
 
   let lastStep: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
-  let jobStartDate = "dummy"
+  let jobStartDate
 
   /**
    * We have to verify all jobs steps. We don't know
@@ -114,8 +114,8 @@ export async function getWorkflowRunStatus() {
    * The conclusion steps, in accordance the documentation, are:
    * <success>, <cancelled>, <failure> and <skipped>
    */
-  const jobs = workflowJobs.data.jobs.forEach (job => {
-    let currentJobStep = job.steps.forEach( step => {
+   for(let job of workflowJobs.data.jobs) {
+    for(let step of job.steps) {
       // check if current step still running
       if (step.completed_at !== null) {
         info(`Step name: ${step.name}`)
@@ -128,22 +128,53 @@ export async function getWorkflowRunStatus() {
 
         // Some step/job has failed. Get out from here.
         if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
-          info("undefined")
+          info("Exiting steps verification")
           return undefined
         }
+       /**  
+        * If nothing has failed, so we have a success scenario
+        * @note ignoring skipped cases. 
+        */
+        lastStep.conclusion = "success"
       }
-      /**  
-       * If nothing has failed, so we have a success scenario
-       * @note ignoring skipped cases. 
-       */
-      lastStep.conclusion = "success"
-    })
-
-    if(currentJobStep === undefined) {
-      info("undefined 2")
-      return undefined
     }
-  })
+   }
+  // const jobs = workflowJobs.data.jobs.forEach (job => {
+  //   let currentJobStep = job.steps.forEach( step => {
+  //     // check if current step still running
+  //     if (step.completed_at !== null) {
+  //       info(`Step name: ${step.name}`)
+  //       info(`Step conclusion: ${step.conclusion}`)
+  //       info (`Start date = ${job.started_at}`)
+  //       info (`End date = ${step.completed_at}`)
+
+  //       lastStep = step
+  //       jobStartDate = job.started_at
+
+  //       // Some step/job has failed. Get out from here.
+  //       if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+  //         info("undefined")
+  //         return undefined
+  //       }
+
+  //       /**  
+  //       * If nothing has failed, so we have a success scenario
+  //       * @note ignoring skipped cases. 
+  //       */
+  //       lastStep.conclusion = "success"
+  //     }
+  //     /**  
+  //      * If nothing has failed, so we have a success scenario
+  //      * @note ignoring skipped cases. 
+  //      */
+  //     lastStep.conclusion = "success"
+  //   })
+
+  //   if(currentJobStep === undefined) {
+  //     info("undefined 2")
+  //     return undefined
+  //   }
+  // })
 
   info(`Job start date ${jobStartDate}`)
   info(`Job End date ${lastStep!!.completed_at}`)
