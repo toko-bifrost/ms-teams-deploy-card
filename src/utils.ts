@@ -98,7 +98,7 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  let lastStep: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+  let lastStep = {} as Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
   let jobStartDate
 
   /**
@@ -114,23 +114,20 @@ export async function getWorkflowRunStatus() {
    * The conclusion steps, in accordance the documentation, are:
    * <success>, <cancelled>, <failure> and <skipped>
    */
-   for(let job of workflowJobs.data.jobs) {
+  for(let job of workflowJobs.data.jobs) {
     for(let step of job.steps) {
+      
       // check if current step still running
       if (step.completed_at !== null) {
-        info(`Step name: ${step.name}`)
-        info(`Step conclusion: ${step.conclusion}`)
-        info (`Start date = ${job.started_at}`)
-        info (`End date = ${step.completed_at}`)
-
         lastStep = step
         jobStartDate = job.started_at
 
         // Some step/job has failed. Get out from here.
-        if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
-          info("Exiting steps verification")
-          break
-        }
+        if (
+            step?.conclusion !== "success" &&
+            step?.conclusion !== "skipped"
+          ) break
+        
        /**  
         * If nothing has failed, so we have a success scenario
         * @note ignoring skipped cases. 
@@ -138,59 +135,19 @@ export async function getWorkflowRunStatus() {
         lastStep.conclusion = "success"
       }
     }
-     // Some step/job has failed. Get out from here.
-     if (lastStep!!.conclusion !== "success" && lastStep!!.conclusion !== "skipped") {
-      info("Exiting steps verification")
-      break
-    }
+    // Some step/job has failed. Get out from here.
+    if (lastStep?.conclusion !== "success") break
    }
-   
-  // const jobs = workflowJobs.data.jobs.forEach (job => {
-  //   let currentJobStep = job.steps.forEach( step => {
-  //     // check if current step still running
-  //     if (step.completed_at !== null) {
-  //       info(`Step name: ${step.name}`)
-  //       info(`Step conclusion: ${step.conclusion}`)
-  //       info (`Start date = ${job.started_at}`)
-  //       info (`End date = ${step.completed_at}`)
-
-  //       lastStep = step
-  //       jobStartDate = job.started_at
-
-  //       // Some step/job has failed. Get out from here.
-  //       if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
-  //         info("undefined")
-  //         return undefined
-  //       }
-
-  //       /**  
-  //       * If nothing has failed, so we have a success scenario
-  //       * @note ignoring skipped cases. 
-  //       */
-  //       lastStep.conclusion = "success"
-  //     }
-  //     /**  
-  //      * If nothing has failed, so we have a success scenario
-  //      * @note ignoring skipped cases. 
-  //      */
-  //     lastStep.conclusion = "success"
-  //   })
-
-  //   if(currentJobStep === undefined) {
-  //     info("undefined 2")
-  //     return undefined
-  //   }
-  // })
 
   info(`Job start date ${jobStartDate}`)
-  info(`Job End date ${lastStep!!.completed_at}`)
-  info(`Conclusion ${lastStep!!.conclusion}`)
+  info(`Job End date ${lastStep?.completed_at}`)
+  info(`Conclusion ${lastStep?.conclusion}`)
   const startTime = moment(jobStartDate, moment.ISO_8601);
-  const endTime = moment(lastStep!!.completed_at, moment.ISO_8601); 
+  const endTime = moment(lastStep?.completed_at, moment.ISO_8601); 
 
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
-    conclusion: lastStep!!.conclusion,
+    conclusion: lastStep?.conclusion,
   };
 }
 
