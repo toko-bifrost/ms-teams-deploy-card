@@ -116,9 +116,12 @@ export async function getWorkflowRunStatus() {
    */
   for(let job of workflowJobs.data.jobs) {
     for(let step of job.steps) {
-      
+
       // check if current step still running
       if (step.completed_at !== null) {
+        info(`Inside loop steps `)
+        info(`Step name: ${step.name}`)
+        info(`Step Conclusion: ${step.conclusion}`)
         lastStep = step
         jobStartDate = job.started_at
 
