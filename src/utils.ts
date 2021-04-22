@@ -108,10 +108,10 @@ export async function getWorkflowRunStatus() {
    * same of the Octokit job name, because it is different.
    * 
    * @note We are using a quadratic way to search all steps.
-   * But we have just a few elements, so this does not 
+   * But we have just a few elements, so this is not 
    * a performance issue
    * 
-   * The conclusion steps, in accordance the documentation, are:
+   * The conclusion steps, according to the documentation, are:
    * <success>, <cancelled>, <failure> and <skipped>
    */
   for(let job of workflowJobs.data.jobs) {
