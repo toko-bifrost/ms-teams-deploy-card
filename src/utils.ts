@@ -88,7 +88,6 @@ export async function formatAndNotify(
 }
 
 export async function getWorkflowRunStatus() {
-  info ("Init get Workflow status")
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -136,10 +135,6 @@ export async function getWorkflowRunStatus() {
     // // Some step/job has failed. Get out from here.
     if (abort) break
    }
-
-  info(`Job start date ${jobStartDate}`)
-  info(`Job End date ${lastStep?.completed_at}`)
-  info(`Conclusion ${lastStep?.conclusion}`)
   const startTime = moment(jobStartDate, moment.ISO_8601);
   const endTime = moment(lastStep?.completed_at, moment.ISO_8601); 
 
