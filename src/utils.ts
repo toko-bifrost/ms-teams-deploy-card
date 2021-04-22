@@ -115,8 +115,9 @@ export async function getWorkflowRunStatus() {
    * <success>, <cancelled>, <failure> and <skipped>
    */
   for(let job of workflowJobs.data.jobs) {
+    info(`job ${job}`)
     for(let step of job.steps) {
-      info(`outside loop steps `)
+      info("outside loop steps ")
       info(`Step name: ${step.name}`)
       info(`Step Conclusion: ${step.conclusion}`)
       info(`Step en at : ${step.completed_at}`)
