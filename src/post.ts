@@ -9,7 +9,6 @@ try {
       getInput(`show-on-failure`).toLowerCase() === "true";
 
     const workflowRunStatus = await getWorkflowRunStatus();
-
     if (
       (showCardOnExit && !showCardOnFailure) ||
       (showCardOnFailure && workflowRunStatus?.conclusion !== "success")

@@ -8,8 +8,6 @@ import { WebhookBody, PotentialAction } from "./models";
 import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
-import { CONCLUSION_THEMES } from "./constants";
-import { Collection } from "yaml/types";
 
 export function escapeMarkdownTokens(text: string) {
   return text
