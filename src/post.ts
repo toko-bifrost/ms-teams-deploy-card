@@ -3,26 +3,22 @@ import { formatAndNotify, getWorkflowRunStatus } from "./utils";
 
 try {
   // setTimeout to give time for Github API to show up the final conclusion
+  info("Init post ")
   setTimeout(async () => {
-    const currentStatus = getInput(`current-status`) 
     const showCardOnExit = getInput(`show-on-exit`).toLowerCase() === "true";
     const showCardOnFailure =
       getInput(`show-on-failure`).toLowerCase() === "true";
 
     const workflowRunStatus = await getWorkflowRunStatus();
 
-    if (currentStatus) {
-       workflowRunStatus.conclusion = currentStatus
-    }
-
     if (
       (showCardOnExit && !showCardOnFailure) ||
-      (showCardOnFailure && workflowRunStatus.conclusion !== "success")
+      (showCardOnFailure && workflowRunStatus?.conclusion !== "success")
     ) {
       formatAndNotify(
         "exit",
-        workflowRunStatus.conclusion,
-        workflowRunStatus.elapsedSeconds
+        workflowRunStatus?.conclusion,
+        workflowRunStatus?.elapsedSeconds
       );
     } else {
       info("Configured to not show card upon job exit.");

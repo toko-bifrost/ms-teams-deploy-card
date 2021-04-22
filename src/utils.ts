@@ -9,6 +9,7 @@ import { formatCompactLayout } from "./layouts/compact";
 import { formatCozyLayout } from "./layouts/cozy";
 import { formatCompleteLayout } from "./layouts/complete";
 import { CONCLUSION_THEMES } from "./constants";
+import { Collection } from "yaml/types";
 
 export function escapeMarkdownTokens(text: string) {
   return text
@@ -87,6 +88,7 @@ export async function formatAndNotify(
 }
 
 export async function getWorkflowRunStatus() {
+  info ("Init get Workflow status")
   const runInfo = getRunInformation();
   const githubToken = getInput("github-token", { required: true });
   const octokit = new Octokit({ auth: `token ${githubToken}` });
@@ -96,32 +98,51 @@ export async function getWorkflowRunStatus() {
     run_id: parseInt(runInfo.runId || "1"),
   });
 
-  const job = workflowJobs.data.jobs.find(
-    (job: Octokit.ActionsListJobsForWorkflowRunResponseJobsItem) =>
-      job.name === process.env.GITHUB_JOB
-  );
+  let lastStep = {} as Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem
+  let jobStartDate
 
-  let lastStep;
-  const stoppedStep = job?.steps.find(
-    (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) =>
-      step.conclusion === "failure" ||
-      step.conclusion === "timed_out" ||
-      step.conclusion === "cancelled" ||
-      step.conclusion === "action_required"
-  );
+  /**
+   * We have to verify all jobs steps. We don't know
+   * if users are using multiple jobs or not. Btw,
+   * we don't need to check if GITHUB_JOB env is the 
+   * same of the Octokit job name, because it is different.
+   * 
+   * @note We are using a quadratic way to search all steps.
+   * But we have just a few elements, so this is not 
+   * a performance issue
+   * 
+   * The conclusion steps, according to the documentation, are:
+   * <success>, <cancelled>, <failure> and <skipped>
+   */
+  let abort = false
+  for(let job of workflowJobs.data.jobs) {
+    for(let step of job.steps) {
+      // check if current step still running
+      if (step.completed_at !== null) {
+        lastStep = step
+        jobStartDate = job.started_at
+        // Some step/job has failed. Get out from here.
+        if (step?.conclusion !== "success" && step?.conclusion !== "skipped") {
+            abort = true
+            break
+        }
+       /**  
+        * If nothing has failed, so we have a success scenario
+        * @note ignoring skipped cases. 
+        */
+        lastStep.conclusion = "success"
+      }
+    }
+    // // Some step/job has failed. Get out from here.
+    if (abort) break
+   }
 
-  if (stoppedStep) {
-    lastStep = stoppedStep;
-  } else {
-    lastStep = job?.steps
-      .reverse()
-      .find(
-        (step: Octokit.ActionsListJobsForWorkflowRunResponseJobsItemStepsItem) => step.status === "completed"
-      );
-  }
+  info(`Job start date ${jobStartDate}`)
+  info(`Job End date ${lastStep?.completed_at}`)
+  info(`Conclusion ${lastStep?.conclusion}`)
+  const startTime = moment(jobStartDate, moment.ISO_8601);
+  const endTime = moment(lastStep?.completed_at, moment.ISO_8601); 
 
-  const startTime = moment(job?.started_at, moment.ISO_8601);
-  const endTime = moment(lastStep?.completed_at, moment.ISO_8601);
   return {
     elapsedSeconds: endTime.diff(startTime, "seconds"),
     conclusion: lastStep?.conclusion,
