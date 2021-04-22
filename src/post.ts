@@ -11,12 +11,12 @@ try {
     const workflowRunStatus = await getWorkflowRunStatus();
     if (
       (showCardOnExit && !showCardOnFailure) ||
-      (showCardOnFailure && workflowRunStatus.conclusion !== "success")
+      (showCardOnFailure && workflowRunStatus?.conclusion !== "success")
     ) {
       formatAndNotify(
         "exit",
-        workflowRunStatus.conclusion,
-        workflowRunStatus.elapsedSeconds
+        workflowRunStatus?.conclusion,
+        workflowRunStatus?.elapsedSeconds
       );
     } else {
       info("Configured to not show card upon job exit.");
