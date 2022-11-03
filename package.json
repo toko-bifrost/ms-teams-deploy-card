@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@actions/core": "^1.2.2",
+    "@actions/core": "^1.10.0",
     "@octokit/rest": "^16.43.1",
     "moment-timezone": "^0.5.27",
     "node-fetch": "^2.6.0",
