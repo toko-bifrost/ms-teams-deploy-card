@@ -1,4 +1,4 @@
-name: Microsoft Teams Deploy Card
+name: Microsoft Teams Deploy Card pk
 author: Project Toko Bifrost
 description: Notify your Teams channel with a beautiful, comprehensive deployment card
 branding:
@@ -63,7 +63,7 @@ inputs:
   custom-actions:
     description: Add more actions and links on cozy and complete layout
     required: false
-    default: null
+    default: View results
   include-files:
     description: Only for complete layout; Set false to exclude list of files
     required: false
