@@ -51,10 +51,16 @@ export function formatCompleteLayout(
     commit.data.html_url
   );
 
+  var iconToAppend = "";
   // Set status and elapsedSeconds
+  if (conclusion.toLocaleUpperCase() === "FAILURE") {
+    iconToAppend = "(noentry)"
+   } else if ( conclusion.toLocaleUpperCase() === "SUCCESS") {
+    iconToAppend = "(checkmarkbutton)"
+   }
   let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s] ${iconToAppend}\``;
   }
 
   // Set section facts
