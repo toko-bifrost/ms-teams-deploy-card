@@ -59,15 +59,15 @@ jobs:
 
 #### Cozy and Complete Layout-specific Configurations
 
-| Name                       | Required | Default                      | Description                                                                                                             |
-| -------------------------- | -------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `environment`              | `false`  | None                         | Name of the environment, e.g. `development`, `production` (won't be included in the card if none)                       |
-| `timezone`                 | `false`  | `"UTC"`                      | A [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. `Australia/Sydney` |
-| `enable-view-status`       | `false`  | `true`                       | Enable an action to view the deployment status                                                                          |
-| `enable-review-diffs`      | `false`  | `true`                       | Enable an action to review commit diffs                                                                                 |
-| `view-status-action-text`  | `false`  | `"View build/deploy status"` | Customize action text in viewing the deployment status                                                                  |
-| `review-diffs-action-text` | `false`  | `"Review commit diffs"`      | Customize action text in reviewing commit diffs                                                                         |
-| `custom-actions`           | `false`  | `null`                       | Add more actions; must be a YAML-parseable multiline string with `text` and `url` pairs                                 |
+| Name                         | Required | Default                      | Description                                                                                                             |
+| ---------------------------- | -------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `environment`                | `false`  | None                         | Name of the environment, e.g. `development`, `production` (won't be included in the card if none)                       |
+| `timezone`                   | `false`  | `"UTC"`                      | A [valid database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. `Australia/Sydney` |
+| `enable-view-status-action`  | `false`  | `true`                       | Enable an action to view the deployment status                                                                          |
+| `enable-review-diffs-action` | `false`  | `true`                       | Enable an action to review commit diffs                                                                                 |
+| `view-status-action-text`    | `false`  | `"View build/deploy status"` | Customize action text in viewing the deployment status                                                                  |
+| `review-diffs-action-text`   | `false`  | `"Review commit diffs"`      | Customize action text in reviewing commit diffs                                                                         |
+| `custom-actions`             | `false`  | `null`                       | Add more actions; must be a YAML-parseable multiline string with `text` and `url` pairs                                 |
 
 #### Complete Layout-specific Configurations
 
