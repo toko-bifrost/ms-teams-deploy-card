@@ -19,7 +19,7 @@ try {
         workflowRunStatus.elapsedSeconds
       );
     } else {
-      info("Configured to not show card upon job exit.");
+      info("Configured to not show card upon job exit");
     }
   }, 2000);
 } catch (error) {
