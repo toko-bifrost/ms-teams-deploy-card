@@ -1,7 +1,7 @@
 {
-  "name": "ms-teams-deploy-card",
+  "name": "ms-teams-deploy-card-pk2",
   "version": "2.0.0",
-  "description": "Microsoft Teams Deploy Card",
+  "description": "Microsoft Teams Deploy Card2",
   "main": "index.ts",
   "repository": "https://github.com/toko-bifrost/ms-teams-deploy-card",
   "author": "Aldwyn Cabarrubias",
