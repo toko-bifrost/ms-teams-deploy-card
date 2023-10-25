@@ -29,10 +29,10 @@ export function formatCompactLayout(
   // Set themeColor
   webhookBody.themeColor = CONCLUSION_THEMES[conclusion] || "957DAD";
 
-  webhookBody.text =
-    `${labels} &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
-    `(commit [${shortSha}](${commit.data.html_url})) on [${process.env.GITHUB_REPOSITORY}](${repoUrl}) ` +
-    `by [@${author.login}](${author.html_url})`;
+  // webhookBody.text =
+  //   `${labels} &nbsp; CI [#${process.env.GITHUB_RUN_NUMBER}](${runLink}) ` +
+  //   `(commit [${shortSha}](${commit.data.html_url})) on [${process.env.GITHUB_REPOSITORY}](${repoUrl}) ` +
+  //   `by [@${author.login}](${author.html_url})`;
 
   return webhookBody;
 }
