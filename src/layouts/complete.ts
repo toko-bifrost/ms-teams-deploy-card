@@ -51,18 +51,20 @@ export function formatCompleteLayout(
     commit.data.html_url
   );
 
+  var iconToAppend = "";
   // Set status and elapsedSeconds
+  if (conclusion.toLocaleUpperCase() === "FAILURE") {
+    iconToAppend = "(noentry) 	\xE2\x9C\x85 \xE2\x9D\x8C";
+  } else if (conclusion.toLocaleUpperCase() === "SUCCESS") {
+    iconToAppend = "(checkmarkbutton) 	\xE2\x9C\x85 \xE2\x9D\x8C";
+  }
   let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
-    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s]\``;
+    labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s] ${iconToAppend}\``;
   }
 
   // Set section facts
   section.facts = [
-    new Fact(
-      "Event type:",
-      "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
-    ),
     new Fact("Status:", labels),
     new Fact(
       "Commit message:",
