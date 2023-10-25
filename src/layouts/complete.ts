@@ -54,10 +54,10 @@ export function formatCompleteLayout(
   var iconToAppend = "";
   // Set status and elapsedSeconds
   if (conclusion.toLocaleUpperCase() === "FAILURE") {
-    iconToAppend = "(noentry)"
-   } else if ( conclusion.toLocaleUpperCase() === "SUCCESS") {
-    iconToAppend = "(checkmarkbutton)"
-   }
+    iconToAppend = "(noentry) 	\xE2\x9C\x85 \xE2\x9D\x8C";
+  } else if (conclusion.toLocaleUpperCase() === "SUCCESS") {
+    iconToAppend = "(checkmarkbutton) 	\xE2\x9C\x85 \xE2\x9D\x8C";
+  }
   let labels = `\`${conclusion.toUpperCase()}\``;
   if (elapsedSeconds) {
     labels = `\`${conclusion.toUpperCase()} [${elapsedSeconds}s] ${iconToAppend}\``;
@@ -65,10 +65,6 @@ export function formatCompleteLayout(
 
   // Set section facts
   section.facts = [
-    new Fact(
-      "Event type:",
-      "`" + process.env.GITHUB_EVENT_NAME?.toUpperCase() + "`"
-    ),
     new Fact("Status:", labels),
     new Fact(
       "Commit message:",
